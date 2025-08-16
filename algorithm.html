@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACM算法研究实验室</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script defer src="assets/highlight.js"></script>
+
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #00ffcc;
+            --accent: #ff2d75;
+            --accent2: #b967ff;
+            --dark-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            --text-light: #e0e0ff;
+            --text: var(--text-light);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-light);
+            background: var(--dark-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 粒子背景（展示相关，保留） */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* 导航栏（展示相关，保留） */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-bottom: 1px solid rgba(58, 134, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%233a86ff"><path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2zm0 2.8L18 10v9h-2v-6H8v6H6v-9l6-7.2z"/></svg>') no-repeat center;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .nav-link {
+            position: relative;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 500;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover { color: var(--primary); }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after { width: 100%; }
+        
+        /* 下拉菜单（展示相关，保留） */
+        .dropdown { position: relative; }
+        
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 220px;
+            background: rgba(10, 10, 26, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(58, 134, 255, 0.25);
+            border-radius: 8px;
+            padding: 0.6rem 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(6px);
+            transition: all 0.22s ease;
+            z-index: 200;
+            white-space: nowrap;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-link {
+            display: block;
+            padding: 0.5rem 1.25rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.18s ease;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .dropdown-link:hover {
+            background: rgba(58, 134, 255, 0.12);
+            color: var(--primary);
+            padding-left: 1.5rem;
+        }
+        
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        /* 全屏导航 */
+        .fullscreen-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+        }
+        
+        .fullscreen-nav.active {
+            transform: translateY(0);
+        }
+        
+        .fullscreen-nav .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+        
+        .fullscreen-nav .close-btn:hover {
+            color: var(--accent);
+        }
+        
+        .fullscreen-nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .fullscreen-nav-link {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .fullscreen-nav-link::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(58, 134, 255, 0.1);
+            z-index: -1;
+            transition: width 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover::before {
+            width: 100%;
+        }
+        
+        /* 页脚（展示相关，保留） */
+        footer {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 3rem 5%;
+            text-align: center;
+            margin-top: 5rem;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link { color: var(--text-light); text-decoration: none; transition: color 0.3s; }
+        .footer-link:hover { color: var(--primary); }
+        
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon i {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .social-icon:hover i {
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            color: var(--dark);
+        }
+        
+        .copyright { font-size: 0.9rem; color: rgba(224, 224, 255, 0.6); }
+        
+        /* 必要动画（logo 脉冲） */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        
+        /* 算法页面样式 */
+        .algorithms-hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .algorithms-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(58, 134, 255, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .algorithms-hero h1 {
+            font-size: 4.5rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            position: relative;
+        }
+        
+        .algorithms-hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .algorithms-hero p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin-bottom: 2.5rem;
+            color: rgba(224, 224, 255, 0.8);
+        }
+        
+        .floating-code {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            color: rgba(58, 134, 255, 0.3);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            pointer-events: none;
+            z-index: -1;
+            animation: floatCode 15s linear infinite;
+        }
+        
+        @keyframes floatCode {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: #0a0a1a;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.4);
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            opacity: 0;
+        }
+        
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+        
+        .algorithms-section {
+            padding: 8rem 10%;
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .section-header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+        
+        .algorithms-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .algorithms-tab {
+            padding: 0.8rem 1.5rem;
+            background: rgba(18, 18, 48, 0.6);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(58, 134, 255, 0.2);
+        }
+        
+        .algorithms-tab.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: #0a0a1a;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(58, 134, 255, 0.3);
+        }
+        
+        .algorithms-tab:hover:not(.active) {
+            border-color: var(--primary);
+        }
+        
+        .algorithms-content {
+            display: none;
+        }
+        
+        .algorithms-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .algorithm-card {
+            background: rgba(18, 18, 48, 0.6);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(58, 134, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .algorithm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            transition: all 0.4s ease;
+        }
+        
+        .algorithm-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .algorithm-card:hover::before {
+            width: 100%;
+            opacity: 0.1;
+        }
+        
+        .algorithm-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+        }
+        
+        .algorithm-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        .algorithm-card .description {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
+        .algorithm-card .complexity {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+        
+        .algorithm-card .complexity-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .algorithm-card .complexity-item i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .algorithm-card .code-preview {
+            background: rgba(5, 5, 16, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border: 1px solid rgba(58, 134, 255, 0.2);
+        }
+        
+        .algorithm-card .links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .algorithm-card .link {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(58, 134, 255, 0.1);
+            border: 1px solid rgba(58, 134, 255, 0.3);
+            border-radius: 30px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .algorithm-card .link:hover {
+            background: var(--primary);
+            color: #0a0a1a;
+            transform: translateY(-3px);
+        }
+        
+        .algorithm-visualization {
+            margin: 5rem 0;
+            position: relative;
+            height: 500px;
+            background: rgba(18, 18, 48, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(58, 134, 255, 0.2);
+        }
+        
+        .visualization-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: rgba(224, 224, 255, 0.5);
+        }
+        
+        .visualization-placeholder i {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+        
+        .page-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(18, 18, 48, 0.6);
+            border-radius: 50%;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(58, 134, 255, 0.2);
+        }
+        
+        .page-link.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: #0a0a1a;
+            font-weight: 600;
+        }
+        
+        .page-link:hover:not(.active) {
+            border-color: var(--primary);
+        }
+        
+        @media (max-width: 992px) {
+            .algorithms-hero h1 {
+                font-size: 3.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .algorithms-hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .algorithms-hero p {
+                font-size: 1.2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2.2rem;
+            }
+            
+            .algorithm-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">ACM LAB</a>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="Introduction to the Laboratory.html" class="nav-link">实验室概况</a>
+                <div class="dropdown-content">
+                    <a href="Introduction to the Laboratory.html" class="dropdown-link">实验室简介</a>
+                    <a href="Laboratory Charter.html" class="dropdown-link">实验室章程</a>
+                </div>
+            </div>
+            
+            <a href="team.html" class="nav-link">团队</a>
+            
+            <div class="dropdown">
+                <a href="paper.html" class="nav-link">成果性展示</a>
+                <div class="dropdown-content">
+                    <a href="paper.html" class="dropdown-link">论文</a>
+                    <a href="algorithm.html" class="dropdown-link">算法</a>
+                    <a href="science and technology innovation.html" class="dropdown-link">科创</a>
+                    <a href="enterprise.html" class="dropdown-link">企业</a>
+                </div>
+            </div>
+            
+            <a href="dynamic.html" class="nav-link">动态</a>
+            
+            <div class="dropdown">
+                <a href="#footer" class="nav-link">加入我们</a>
+                <div class="dropdown-content">
+                    <a href="Recruitment for the Algorithm Group.html" class="dropdown-link">算法组招生</a>
+                    <a href="Project team recruitment.html" class="dropdown-link">项目组招生</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">☰</div>
+        </nav>
+    
+    <!-- 英雄区域 -->
+    <section class="algorithms-hero">
+        <!-- 浮动代码元素 -->
+        <div class="floating-code" style="top: 20%; left: 10%;">
+            int dijkstra(int s, int t) {
+            &nbsp;&nbsp;priority_queue&lt;pair&lt;int,int&gt;&gt; pq;
+            &nbsp;&nbsp;vector&lt;int&gt; dist(n, INF);
+            &nbsp;&nbsp;dist[s] = 0;
+            &nbsp;&nbsp;pq.push({0, s});
+            &nbsp;&nbsp;while(!pq.empty()) {
+            &nbsp;&nbsp;&nbsp;&nbsp;auto [d, u] = pq.top(); pq.pop();
+            &nbsp;&nbsp;&nbsp;&nbsp;if(u == t) return d;
+            &nbsp;&nbsp;&nbsp;&nbsp;for(auto [v, w] : adj[u]) {
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(dist[v] > d + w) {
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist[v] = d + w;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pq.push({dist[v], v});
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+            &nbsp;&nbsp;&nbsp;&nbsp;}
+            &nbsp;&nbsp;}
+            &nbsp;&nbsp;return -1;
+            }
+        </div>
+        
+        <div class="floating-code" style="top: 40%; right: 15%;">
+            def backpropagation(X, y, model, lr):
+            &nbsp;&nbsp;# 前向传播
+            &nbsp;&nbsp;y_pred = model.forward(X)
+            &nbsp;&nbsp;# 计算损失
+            &nbsp;&nbsp;loss = cross_entropy(y_pred, y)
+            &nbsp;&nbsp;# 反向传播
+            &nbsp;&nbsp;grads = model.backward(X, y)
+            &nbsp;&nbsp;# 更新参数
+            &nbsp;&nbsp;for layer in model.layers:
+            &nbsp;&nbsp;&nbsp;&nbsp;layer.W -= lr * grads[layer.name]['W']
+            &nbsp;&nbsp;&nbsp;&nbsp;layer.b -= lr * grads[layer.name]['b']
+            &nbsp;&nbsp;return loss
+        </div>
+        
+        <div class="floating-code" style="bottom: 20%; left: 20%;">
+            class SegmentTree:
+            &nbsp;&nbsp;def __init__(self, data):
+            &nbsp;&nbsp;&nbsp;&nbsp;self.n = len(data)
+            &nbsp;&nbsp;&nbsp;&nbsp;self.size = 1
+            &nbsp;&nbsp;&nbsp;&nbsp;while self.size < self.n:
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.size <<= 1
+            &nbsp;&nbsp;&nbsp;&nbsp;self.tree = [0] * (2 * self.size)
+            &nbsp;&nbsp;&nbsp;&nbsp;for i in range(self.n):
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.tree[self.size + i] = data[i]
+            &nbsp;&nbsp;&nbsp;&nbsp;for i in range(self.size-1, 0, -1):
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.tree[i] = self.tree[2*i] + self.tree[2*i+1]
+            &nbsp;&nbsp;...
+        </div>
+        
+        <h1>算法研究</h1>
+        <p>从竞赛算法到深度学习，探索计算问题的优雅解决方案</p>
+        <a href="#algorithms" class="cta-button">探索算法</a>
+    </section>
+    
+    <!-- 算法分类部分 -->
+    <section class="algorithms-section" id="algorithms">
+        <div class="section-header">
+            <h2>算法研究</h2>
+            <p>从竞赛算法到前沿深度学习算法</p>
+        </div>
+        
+        <div class="algorithms-tabs">
+            <div class="algorithms-tab active" data-tab="competition">竞赛算法</div>
+            <div class="algorithms-tab" data-tab="deep-learning">深度学习</div>
+            <div class="algorithms-tab" data-tab="data-structures">数据结构</div>
+            <div class="algorithms-tab" data-tab="optimization">优化算法</div>
+        </div>
+        
+        <div class="algorithms-content active" id="competition-content">
+            <div class="algorithm-card">
+                <h3>Dijkstra最短路径算法优化</h3>
+                <div class="description">
+                    <p>我们提出了一种改进的Dijkstra算法实现，通过优化优先队列的数据结构和访问模式，在稠密图上实现了20-30%的性能提升。该算法特别适用于ICPC竞赛中的路径规划问题。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(E + V log V)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(V)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 优化版Dijkstra算法
+void dijkstra_optimized(int s, vector&lt;vector&lt;pair&lt;int,int&gt;&gt;&gt; &adj, vector&lt;int&gt; &dist) {
+    vector&lt;bool&gt; visited(adj.size(), false);
+    dist.assign(adj.size(), INF);
+    dist[s] = 0;
+    
+    // 使用自定义小顶堆
+    auto cmp = [](auto &a, auto &b) { return a.second > b.second; };
+    priority_queue&lt;pair&lt;int,int&gt;, vector&lt;pair&lt;int,int&gt;&gt;, decltype(cmp)&gt; pq(cmp);
+    pq.push({s, 0});
+    
+    while(!pq.empty()) {
+        auto [u, d] = pq.top(); pq.pop();
+        if(visited[u]) continue;
+        visited[u] = true;
+        
+        for(auto [v, w] : adj[u]) {
+            if(!visited[v] && dist[v] > d + w) {
+                dist[v] = d + w;
+                pq.push({v, dist[v]});
+            }
+        }
+    }
+}</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-card">
+                <h3>快速傅里叶变换(FFT)在竞赛中的应用</h3>
+                <div class="description">
+                    <p>本文详细介绍了FFT算法在多项式乘法和大数乘法中的应用，提供了针对竞赛优化的实现版本，包括预处理旋转因子和迭代实现，相比递归实现有2-3倍的性能提升。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(n log n)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(n)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 迭代版FFT实现
+void fft(vector&lt;complex&lt;double&gt;&gt; &a, bool invert) {
+    int n = a.size();
+    for(int i=1, j=0; i<n; i++) {
+        int bit = n >> 1;
+        for(; j & bit; bit >>= 1) j ^= bit;
+        j ^= bit;
+        if(i < j) swap(a[i], a[j]);
+    }
+    
+    for(int len=2; len<=n; len<<=1) {
+        double ang = 2*PI/len * (invert ? -1 : 1);
+        complex&lt;double&gt; wlen(cos(ang), sin(ang));
+        for(int i=0; i<n; i+=len) {
+            complex&lt;double&gt; w(1);
+            for(int j=0; j<len/2; j++) {
+                complex&lt;double&gt; u = a[i+j], v = a[i+j+len/2]*w;
+                a[i+j] = u + v;
+                a[i+j+len/2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+    if(invert) for(auto &x : a) x /= n;
+}</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-visualization">
+                <div class="visualization-placeholder">
+                    <i class="fas fa-project-diagram"></i>
+                    <p>算法可视化展示区域</p>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <a href="#" class="page-link active">1</a>
+                <a href="#" class="page-link">2</a>
+                <a href="#" class="page-link">3</a>
+                <a href="#" class="page-link">4</a>
+                <a href="#" class="page-link">5</a>
+                <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+        
+        <div class="algorithms-content" id="deep-learning-content">
+            <div class="algorithm-card">
+                <h3>卷积神经网络(CNN)优化实现</h3>
+                <div class="description">
+                    <p>我们提出了一种高效的卷积神经网络实现，通过优化卷积操作的内存访问模式和并行计算策略，在图像分类任务上实现了15-25%的训练速度提升。该实现特别适用于计算机视觉任务。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(N × C × H × W × K²)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(N × C × H × W)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 优化版卷积层实现
+class OptimizedConv2D:
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1):
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.kernel_size = kernel_size
+        self.stride = stride
+        self.weights = torch.randn(out_channels, in_channels, kernel_size, kernel_size)
+        self.bias = torch.zeros(out_channels)
+    
+    def forward(self, x):
+        N, C, H, W = x.shape
+        out_h = (H - self.kernel_size) // self.stride + 1
+        out_w = (W - self.kernel_size) // self.stride + 1
+        
+        # 使用im2col优化卷积计算
+        x_col = self.im2col(x, self.kernel_size, self.stride)
+        w_row = self.weights.view(self.out_channels, -1)
+        
+        out = torch.mm(w_row, x_col) + self.bias.view(-1, 1)
+        return out.view(N, self.out_channels, out_h, out_w)</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-card">
+                <h3>注意力机制(Attention)高效实现</h3>
+                <div class="description">
+                    <p>基于Transformer架构的注意力机制优化实现，通过Flash Attention技术和内存高效的计算策略，显著降低了长序列处理的内存占用，在自然语言处理任务中取得了优异的性能表现。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(N × L²)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(N × L)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// Flash Attention核心实现
+def flash_attention(q, k, v, mask=None, dropout=0.0):
+    """
+    q, k, v: [batch_size, seq_len, d_model]
+    """
+    batch_size, seq_len, d_model = q.shape
+    scale = d_model ** -0.5
+    
+    # 分块计算以减少内存使用
+    block_size = min(seq_len, 512)
+    output = torch.zeros_like(q)
+    
+    for i in range(0, seq_len, block_size):
+        end_i = min(i + block_size, seq_len)
+        q_block = q[:, i:end_i, :]
+        
+        # 计算注意力分数
+        scores = torch.matmul(q_block, k.transpose(-2, -1)) * scale
+        if mask is not None:
+            scores = scores.masked_fill(mask[:, i:end_i, :] == 0, -1e9)
+        
+        # 应用softmax并计算输出
+        attn_weights = F.softmax(scores, dim=-1)
+        if dropout > 0:
+            attn_weights = F.dropout(attn_weights, p=dropout)
+        
+        output[:, i:end_i, :] = torch.matmul(attn_weights, v)
+    
+    return output</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-visualization">
+                <div class="visualization-placeholder">
+                    <i class="fas fa-brain"></i>
+                    <p>深度学习算法可视化展示区域</p>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <a href="#" class="page-link active">1</a>
+                <a href="#" class="page-link">2</a>
+                <a href="#" class="page-link">3</a>
+                <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+        
+        <div class="algorithms-content" id="data-structures-content">
+            <div class="algorithm-card">
+                <h3>线段树(Segment Tree)高级应用</h3>
+                <div class="description">
+                    <p>实现了支持区间更新和区间查询的懒惰传播线段树，通过延迟标记技术优化批量更新操作。该数据结构在处理大规模区间操作问题时表现优异，广泛应用于竞赛和实际项目中。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(log N)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(4N)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 懒惰传播线段树实现
+class LazySegmentTree {
+private:
+    vector&lt;long long&gt; tree, lazy;
+    int n;
+    
+    void push(int node, int start, int end) {
+        if(lazy[node] != 0) {
+            tree[node] += (end - start + 1) * lazy[node];
+            if(start != end) {
+                lazy[2*node] += lazy[node];
+                lazy[2*node+1] += lazy[node];
+            }
+            lazy[node] = 0;
+        }
+    }
+    
+    void updateRange(int node, int start, int end, int l, int r, long long val) {
+        push(node, start, end);
+        if(start > r || end < l) return;
+        if(start >= l && end <= r) {
+            lazy[node] += val;
+            push(node, start, end);
+            return;
+        }
+        int mid = (start + end) / 2;
+        updateRange(2*node, start, mid, l, r, val);
+        updateRange(2*node+1, mid+1, end, l, r, val);
+        push(2*node, start, mid);
+        push(2*node+1, mid+1, end);
+        tree[node] = tree[2*node] + tree[2*node+1];
+    }
+    
+public:
+    LazySegmentTree(vector&lt;int&gt;& arr) {
+        n = arr.size();
+        tree.assign(4*n, 0);
+        lazy.assign(4*n, 0);
+        build(arr, 1, 0, n-1);
+    }
+}</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-card">
+                <h3>树状数组(Fenwick Tree)优化实现</h3>
+                <div class="description">
+                    <p>基于树状数组的高效实现，支持单点更新和前缀查询操作。通过位运算优化lowbit操作，实现了极致的性能表现。该数据结构在处理动态前缀和问题时具有代码简洁、常数小的优势。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(log N)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(N)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 优化版树状数组实现
+class FenwickTree {
+private:
+    vector&lt;long long&gt; tree;
+    int n;
+    
+    inline int lowbit(int x) { return x & (-x); }
+    
+public:
+    FenwickTree(int size) : n(size) {
+        tree.assign(n + 1, 0);
+    }
+    
+    void update(int idx, long long delta) {
+        for(int i = idx; i <= n; i += lowbit(i)) {
+            tree[i] += delta;
+        }
+    }
+    
+    long long query(int idx) {
+        long long sum = 0;
+        for(int i = idx; i > 0; i -= lowbit(i)) {
+            sum += tree[i];
+        }
+        return sum;
+    }
+    
+    long long rangeQuery(int l, int r) {
+        return query(r) - query(l - 1);
+    }
+    
+    // 二分查找第k小元素
+    int kth(long long k) {
+        int pos = 0;
+        for(int i = __lg(n); i >= 0; i--) {
+            if(pos + (1 << i) <= n && tree[pos + (1 << i)] < k) {
+                k -= tree[pos + (1 << i)];
+                pos += (1 << i);
+            }
+        }
+        return pos + 1;
+    }
+};</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-card">
+                <h3>平衡二叉搜索树(Treap)实现</h3>
+                <div class="description">
+                    <p>结合了二叉搜索树和堆的特性，通过随机优先级保持树的平衡性。支持插入、删除、查询、分裂、合并等操作，在处理动态有序数据时表现出色，是竞赛编程中的重要工具。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(log N) 期望</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(N)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// Treap平衡树实现
+struct TreapNode {
+    int val, priority, size;
+    TreapNode* left, *right;
+    TreapNode(int v) : val(v), priority(rand()), size(1), left(nullptr), right(nullptr) {}
+};
+
+class Treap {
+private:
+    TreapNode* root;
+    
+    void updateSize(TreapNode* node) {
+        if(node) {
+            node->size = 1 + getSize(node->left) + getSize(node->right);
+        }
+    }
+    
+    int getSize(TreapNode* node) { return node ? node->size : 0; }
+    
+    TreapNode* rotateRight(TreapNode* root) {
+        TreapNode* newRoot = root->left;
+        root->left = newRoot->right;
+        newRoot->right = root;
+        updateSize(root);
+        updateSize(newRoot);
+        return newRoot;
+    }
+    
+    TreapNode* rotateLeft(TreapNode* root) {
+        TreapNode* newRoot = root->right;
+        root->right = newRoot->left;
+        newRoot->left = root;
+        updateSize(root);
+        updateSize(newRoot);
+        return newRoot;
+    }
+    
+    TreapNode* insert(TreapNode* root, int val) {
+        if(!root) return new TreapNode(val);
+        
+        if(val <= root->val) {
+            root->left = insert(root->left, val);
+            if(root->left->priority > root->priority)
+                root = rotateRight(root);
+        } else {
+            root->right = insert(root->right, val);
+            if(root->right->priority > root->priority)
+                root = rotateLeft(root);
+        }
+        updateSize(root);
+        return root;
+    }
+};</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-visualization">
+                <div class="visualization-placeholder">
+                    <i class="fas fa-sitemap"></i>
+                    <p>数据结构算法可视化展示区域</p>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <a href="#" class="page-link active">1</a>
+                <a href="#" class="page-link">2</a>
+                <a href="#" class="page-link">3</a>
+                <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+        
+        <div class="algorithms-content" id="optimization-content">
+            <div class="algorithm-card">
+                <h3>遗传算法(Genetic Algorithm)优化实现</h3>
+                <div class="description">
+                    <p>基于生物进化机制的启发式优化算法，通过选择、交叉、变异等操作寻找最优解。我们的实现引入了自适应参数调整机制，在复杂函数优化和组合优化问题中表现出色，特别适用于多模态和高维优化问题。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(G × P × F)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(P × L)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 自适应遗传算法实现
+class AdaptiveGeneticAlgorithm {
+private:
+    int population_size, chromosome_length, max_generations;
+    double crossover_rate, mutation_rate;
+    vector&lt;vector&lt;bool&gt;&gt; population;
+    vector&lt;double&gt; fitness;
+    
+    double evaluateFitness(const vector&lt;bool&gt;& chromosome) {
+        // 将二进制编码转换为实数
+        double value = 0;
+        for(int i = 0; i < chromosome.size(); i++) {
+            if(chromosome[i]) value += pow(2, i);
+        }
+        value = (value / pow(2, chromosome.size())) * 10 - 5; // 映射到[-5,5]
+        return -(value * value); // 求最大值，转换为求最小值
+    }
+    
+    vector&lt;bool&gt; crossover(const vector&lt;bool&gt;& parent1, const vector&lt;bool&gt;& parent2) {
+        vector&lt;bool&gt; offspring(chromosome_length);
+        int crossover_point = rand() % chromosome_length;
+        
+        for(int i = 0; i < chromosome_length; i++) {
+            if(i < crossover_point) offspring[i] = parent1[i];
+            else offspring[i] = parent2[i];
+        }
+        return offspring;
+    }
+    
+    void mutate(vector&lt;bool&gt;& chromosome) {
+        for(int i = 0; i < chromosome_length; i++) {
+            if((double)rand() / RAND_MAX < mutation_rate) {
+                chromosome[i] = !chromosome[i];
+            }
+        }
+    }
+    
+public:
+    AdaptiveGeneticAlgorithm(int pop_size, int chrom_len, int max_gen) 
+        : population_size(pop_size), chromosome_length(chrom_len), 
+          max_generations(max_gen), crossover_rate(0.8), mutation_rate(0.01) {
+        
+        // 初始化种群
+        population.resize(population_size, vector&lt;bool&gt;(chromosome_length));
+        fitness.resize(population_size);
+        
+        for(int i = 0; i < population_size; i++) {
+            for(int j = 0; j < chromosome_length; j++) {
+                population[i][j] = rand() % 2;
+            }
+        }
+    }
+};</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-card">
+                <h3>模拟退火算法(Simulated Annealing)</h3>
+                <div class="description">
+                    <p>基于统计力学中固体退火过程的全局优化算法。通过控制温度参数和接受准则，在搜索过程中平衡全局探索和局部开发。我们的实现采用自适应冷却策略，有效避免早熟收敛，在旅行商问题等组合优化中取得优异效果。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(I × N)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(N)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 自适应模拟退火算法
+class SimulatedAnnealing {
+private:
+    double initial_temp, final_temp, cooling_rate;
+    int max_iterations;
+    
+    double objectiveFunction(const vector&lt;int&gt;& solution) {
+        // 以TSP问题为例
+        double total_distance = 0;
+        for(int i = 0; i < solution.size(); i++) {
+            int from = solution[i];
+            int to = solution[(i + 1) % solution.size()];
+            total_distance += distance[from][to];
+        }
+        return total_distance;
+    }
+    
+    vector&lt;int&gt; generateNeighbor(const vector&lt;int&gt;& current) {
+        vector&lt;int&gt; neighbor = current;
+        int i = rand() % neighbor.size();
+        int j = rand() % neighbor.size();
+        swap(neighbor[i], neighbor[j]); // 2-opt交换
+        return neighbor;
+    }
+    
+    bool acceptSolution(double current_cost, double new_cost, double temperature) {
+        if(new_cost < current_cost) return true;
+        double probability = exp(-(new_cost - current_cost) / temperature);
+        return (double)rand() / RAND_MAX < probability;
+    }
+    
+public:
+    vector&lt;int&gt; optimize(vector&lt;int&gt; initial_solution) {
+        vector&lt;int&gt; current_solution = initial_solution;
+        vector&lt;int&gt; best_solution = current_solution;
+        
+        double current_cost = objectiveFunction(current_solution);
+        double best_cost = current_cost;
+        double temperature = initial_temp;
+        
+        for(int iteration = 0; iteration < max_iterations; iteration++) {
+            vector&lt;int&gt; new_solution = generateNeighbor(current_solution);
+            double new_cost = objectiveFunction(new_solution);
+            
+            if(acceptSolution(current_cost, new_cost, temperature)) {
+                current_solution = new_solution;
+                current_cost = new_cost;
+                
+                if(new_cost < best_cost) {
+                    best_solution = new_solution;
+                    best_cost = new_cost;
+                }
+            }
+            
+            // 自适应冷却
+            temperature = initial_temp * pow(final_temp/initial_temp, 
+                         (double)iteration/max_iterations);
+        }
+        
+        return best_solution;
+    }
+};</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-card">
+                <h3>粒子群优化算法(PSO)高效实现</h3>
+                <div class="description">
+                    <p>模拟鸟群觅食行为的群智能优化算法，通过粒子间的信息共享和协作搜索找到最优解。我们的实现融入了惯性权重线性递减和收缩因子机制，在连续函数优化问题中展现出快速收敛和良好的全局搜索能力。</p>
+                </div>
+                <div class="complexity">
+                    <div class="complexity-item">
+                        <i class="fas fa-clock"></i>
+                        <span>时间复杂度: O(I × P × D)</span>
+                    </div>
+                    <div class="complexity-item">
+                        <i class="fas fa-memory"></i>
+                        <span>空间复杂度: O(P × D)</span>
+                    </div>
+                </div>
+                <div class="code-preview">
+                    <pre>// 改进粒子群优化算法
+class ImprovedPSO {
+private:
+    struct Particle {
+        vector&lt;double&gt; position, velocity, best_position;
+        double fitness, best_fitness;
+    };
+    
+    vector&lt;Particle&gt; swarm;
+    vector&lt;double&gt; global_best_position;
+    double global_best_fitness;
+    int swarm_size, dimensions, max_iterations;
+    double w_max, w_min, c1, c2; // 惯性权重和学习因子
+    
+    double fitnessFunction(const vector&lt;double&gt;& position) {
+        // Rastrigin函数作为测试函数
+        double result = 10 * dimensions;
+        for(int i = 0; i < dimensions; i++) {
+            result += position[i]*position[i] - 10*cos(2*M_PI*position[i]);
+        }
+        return result;
+    }
+    
+public:
+    ImprovedPSO(int size, int dim, int max_iter) 
+        : swarm_size(size), dimensions(dim), max_iterations(max_iter),
+          w_max(0.9), w_min(0.4), c1(2.0), c2(2.0) {
+        
+        swarm.resize(swarm_size);
+        global_best_position.resize(dimensions);
+        global_best_fitness = DBL_MAX;
+        
+        // 初始化粒子群
+        for(int i = 0; i < swarm_size; i++) {
+            swarm[i].position.resize(dimensions);
+            swarm[i].velocity.resize(dimensions);
+            swarm[i].best_position.resize(dimensions);
+            
+            for(int j = 0; j < dimensions; j++) {
+                swarm[i].position[j] = (rand()/double(RAND_MAX) - 0.5) * 10.24;
+                swarm[i].velocity[j] = (rand()/double(RAND_MAX) - 0.5) * 2;
+                swarm[i].best_position[j] = swarm[i].position[j];
+            }
+            
+            swarm[i].fitness = fitnessFunction(swarm[i].position);
+            swarm[i].best_fitness = swarm[i].fitness;
+            
+            if(swarm[i].fitness < global_best_fitness) {
+                global_best_fitness = swarm[i].fitness;
+                global_best_position = swarm[i].position;
+            }
+        }
+    }
+};</pre>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> 详细分析</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 完整代码</a>
+                </div>
+            </div>
+            
+            <div class="algorithm-visualization">
+                <div class="visualization-placeholder">
+                    <i class="fas fa-chart-line"></i>
+                    <p>优化算法可视化展示区域</p>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <a href="#" class="page-link active">1</a>
+                <a href="#" class="page-link">2</a>
+                <a href="#" class="page-link">3</a>
+                <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer id="footer" class="footer">
+        <a href="index.html" class="footer-logo">ACM实验室</a>
+        
+        <div class="footer-links">
+            <a href="Introduction to the Laboratory.html" class="footer-link">实验室简介</a>
+            <a href="Laboratory Charter.html" class="footer-link">实验室章程</a>
+            <a href="team.html" class="footer-link">团队</a>
+            <a href="paper.html" class="footer-link">论文</a>
+            <a href="algorithm.html" class="footer-link">算法</a>
+            <a href="science and technology innovation.html" class="footer-link">科创</a>
+            <a href="enterprise.html" class="footer-link">企业</a>
+            <a href="dynamic.html" class="footer-link">动态</a>
+            <a href="Recruitment for the Algorithm Group.html" class="footer-link">算法组招生</a>
+            <a href="Project team recruitment.html" class="footer-link">项目组招生</a>
+        </div>
+        
+        <div class="footer-social">
+            <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-weibo"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+        </div>
+        
+        <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 粒子背景初始化（仅保留展示相关）
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#3a86ff' },
+                shape: { type: 'circle', stroke: { width: 0, color: '#000000' }, polygon: { nb_sides: 5 } },
+                opacity: { value: 0.5 },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#3a86ff', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
+                }
+            },
+            retina_detect: true
+        });
+
+        // 标签切换功能
+        const tabs = document.querySelectorAll('.algorithms-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.algorithms-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.algorithms-content').forEach(c => c.classList.remove('active'));
+                
+                // 添加active类到当前标签
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+
+        // 创建更多浮动代码
+        const heroSection = document.querySelector('.algorithms-hero');
+        if (heroSection) {
+            const codeSnippets = [
+                "int lis(vector<int>& nums) {\n  vector<int> dp;\n  for(int x : nums) {\n    auto it = lower_bound(dp.begin(), dp.end(), x);\n    if(it == dp.end()) dp.push_back(x);\n    else *it = x;\n  }\n  return dp.size();\n}",
+                "def knapsack(W, wt, val, n):\n    dp = [[0]*(W+1) for _ in range(n+1)]\n    for i in range(1, n+1):\n        for w in range(1, W+1):\n            if wt[i-1] <= w:\n                dp[i][w] = max(val[i-1]+dp[i-1][w-wt[i-1]], dp[i-1][w])\n            else:\n                dp[i][w] = dp[i-1][w]\n    return dp[n][W]",
+                "class UnionFind {\n  constructor(size) {\n    this.parent = Array(size).fill().map((_,i)=>i);\n  }\n  find(x) {\n    if(this.parent[x] !== x) \n      this.parent[x] = this.find(this.parent[x]);\n    return this.parent[x];\n  }\n  union(x,y) {\n    this.parent[this.find(x)] = this.find(y);\n  }\n}"
+            ];
+
+            for(let i=0; i<6; i++) {
+                const code = document.createElement('div');
+                code.className = 'floating-code';
+                code.style.top = `${Math.random() * 80 + 10}%`;
+                code.style.left = `${Math.random() * 80 + 10}%`;
+                code.style.animationDelay = `${Math.random() * 10}s`;
+                code.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+                heroSection.appendChild(code);
+            }
+        }
+
+        // 算法卡片悬停效果
+        const algorithmCards = document.querySelectorAll('.algorithm-card');
+        algorithmCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+</html>

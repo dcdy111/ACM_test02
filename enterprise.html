@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACM算法研究实验室</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script defer src="assets/highlight.js"></script>
+
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #00ffcc;
+            --accent: #ff2d75;
+            --accent2: #b967ff;
+            --dark-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            --text-light: #e0e0ff;
+            --text: var(--text-light);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-light);
+            background: var(--dark-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 粒子背景（展示相关，保留） */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* 导航栏（展示相关，保留） */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-bottom: 1px solid rgba(58, 134, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%233a86ff"><path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2zm0 2.8L18 10v9h-2v-6H8v6H6v-9l6-7.2z"/></svg>') no-repeat center;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .nav-link {
+            position: relative;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 500;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover { color: var(--primary); }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after { width: 100%; }
+        
+        /* 下拉菜单（展示相关，保留） */
+        .dropdown { position: relative; }
+        
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 220px;
+            background: rgba(10, 10, 26, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(58, 134, 255, 0.25);
+            border-radius: 8px;
+            padding: 0.6rem 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(6px);
+            transition: all 0.22s ease;
+            z-index: 200;
+            white-space: nowrap;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-link {
+            display: block;
+            padding: 0.5rem 1.25rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.18s ease;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .dropdown-link:hover {
+            background: rgba(58, 134, 255, 0.12);
+            color: var(--primary);
+            padding-left: 1.5rem;
+        }
+        
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        /* 全屏导航 */
+        .fullscreen-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+        }
+        
+        .fullscreen-nav.active {
+            transform: translateY(0);
+        }
+        
+        .fullscreen-nav .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+        
+        .fullscreen-nav .close-btn:hover {
+            color: var(--accent);
+        }
+        
+        .fullscreen-nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .fullscreen-nav-link {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .fullscreen-nav-link::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(58, 134, 255, 0.1);
+            z-index: -1;
+            transition: width 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover::before {
+            width: 100%;
+        }
+        
+        /* 页脚（展示相关，保留） */
+        footer {
+            background: linear-gradient(180deg, rgba(10, 10, 26, 0.5) 0%, rgba(5, 5, 16, 0.8) 100%);
+            padding: 3rem 5%;
+            text-align: center;
+            margin-top: 0;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link { color: var(--text-light); text-decoration: none; transition: color 0.3s; }
+        .footer-link:hover { color: var(--primary); }
+        
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon i {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .social-icon:hover i {
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            color: var(--dark);
+        }
+        
+        .copyright { font-size: 0.9rem; color: rgba(224, 224, 255, 0.6); }
+        
+        /* 必要动画（logo 脉冲） */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        
+        /* 企业合作页面专用样式 */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #605dff;
+            --neon-pink: #ff2d75;
+            --glow: 0 0 10px rgba(96, 93, 255, 0.5);
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+        
+        .corp-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 5% 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .corp-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(96, 93, 255, 0.1) 0%, rgba(0, 243, 255, 0.05) 50%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .corp-hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(96, 93, 255, 0.3);
+        }
+        
+        .corp-hero p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            font-weight: 300;
+        }
+        
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .hero-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: var(--dark-bg);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(96, 93, 255, 0.5);
+        }
+        
+        .hero-btn.secondary {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(96, 93, 255, 0.6);
+        }
+        
+        .hero-btn.secondary:hover {
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.5);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 0 5%;
+            position: relative;
+        }
+        
+        .section-header h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+        
+        .section-header::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            margin: 2rem auto 0;
+            border-radius: 3px;
+            box-shadow: var(--glow);
+        }
+        
+        .corp-benefits {
+            padding: 6rem 5%;
+            background: linear-gradient(180deg, rgba(5, 5, 16, 0.8) 0%, rgba(10, 10, 26, 0.5) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .corp-benefits::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="50" height="50" x="25" y="25" fill="none" stroke="%23605dff" stroke-width="0.5" stroke-dasharray="5 5"/></svg>');
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .benefit-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(96, 93, 255, 0.1);
+            overflow: hidden;
+        }
+        
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(96, 93, 255, 0.1), rgba(0, 243, 255, 0.1));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 243, 255, 0.1);
+            border-color: rgba(96, 93, 255, 0.3);
+        }
+        
+        .benefit-card:hover::before {
+            opacity: 1;
+        }
+        
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+        
+        .benefit-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .benefit-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            opacity: 0.8;
+        }
+        
+        .partners-section {
+            padding: 6rem 5%;
+            position: relative;
+        }
+        
+        .partners-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(10, 10, 26, 0.5) 0%, rgba(5, 5, 16, 0.8) 100%);
+            z-index: -1;
+        }
+        
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            align-items: center;
+        }
+        
+        .partner-logo {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(96, 93, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .partner-logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(96, 93, 255, 0.1), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .partner-logo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(96, 93, 255, 0.1);
+            border-color: rgba(96, 93, 255, 0.3);
+        }
+        
+        .partner-logo:hover::before {
+            left: 100%;
+        }
+        
+        .partner-logo img {
+            max-width: 80%;
+            max-height: 80%;
+            filter: grayscale(100%) brightness(1.5);
+            transition: all 0.3s ease;
+        }
+        
+        .partner-logo:hover img {
+            filter: grayscale(0%) brightness(1);
+        }
+        
+        .contact-section {
+            padding: 6rem 5%;
+            background: linear-gradient(180deg, rgba(5, 5, 16, 0.8) 0%, rgba(10, 10, 26, 0.5) 100%);
+            position: relative;
+        }
+        
+        .contact-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 3rem;
+            border: 1px solid rgba(96, 93, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .contact-form::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(96, 93, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--neon-blue);
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(96, 93, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: #0a0a1a;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 0 15px rgba(96, 93, 255, 0.5);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(96, 93, 255, 0.6);
+        }
+        
+        @media (max-width: 992px) {
+            .corp-hero h1 {
+                font-size: 3.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .corp-hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .corp-hero p {
+                font-size: 1.2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .hero-btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .partners-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">ACM LAB</a>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="Introduction to the Laboratory.html" class="nav-link">实验室概况</a>
+                <div class="dropdown-content">
+                    <a href="Introduction to the Laboratory.html" class="dropdown-link">实验室简介</a>
+                    <a href="Laboratory Charter.html" class="dropdown-link">实验室章程</a>
+                </div>
+            </div>
+            
+            <a href="team.html" class="nav-link">团队</a>
+            
+            <div class="dropdown">
+                <a href="paper.html" class="nav-link">成果性展示</a>
+                <div class="dropdown-content">
+                    <a href="paper.html" class="dropdown-link">论文</a>
+                    <a href="algorithm.html" class="dropdown-link">算法</a>
+                    <a href="science and technology innovation.html" class="dropdown-link">科创</a>
+                    <a href="enterprise.html" class="dropdown-link">企业</a>
+                </div>
+            </div>
+            
+            <a href="dynamic.html" class="nav-link">动态</a>
+            
+            <div class="dropdown">
+                <a href="#footer" class="nav-link">加入我们</a>
+                <div class="dropdown-content">
+                    <a href="Recruitment for the Algorithm Group.html" class="dropdown-link">算法组招生</a>
+                    <a href="Project team recruitment.html" class="dropdown-link">项目组招生</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">☰</div>
+        </nav>
+    <!-- 英雄区域 -->
+    <section class="corp-hero">
+        <h1>校企合作</h1>
+        <p>连接学术界与产业界，将前沿研究成果转化为实际生产力</p>
+        <div class="hero-btns">
+            <a href="#contact" class="hero-btn">立即咨询</a>
+            <a href="#partners" class="hero-btn secondary">查看合作伙伴</a>
+        </div>
+    </section>
+    
+    <!-- 合作优势 -->
+    <section class="corp-benefits">
+        <div class="section-header">
+            <h2>合作优势</h2>
+            <p>与ACM实验室合作，企业将获得以下独特优势</p>
+        </div>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3>前沿技术</h3>
+                <p>获取最先进的算法和技术解决方案，保持行业领先地位</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>人才储备</h3>
+                <p>优先接触顶尖计算机科学人才，建立长期人才输送渠道</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>联合创新</h3>
+                <p>共同研发解决行业痛点的创新方案，共享知识产权</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>成本优化</h3>
+                <p>降低研发成本，提高研发效率，缩短产品上市时间</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3>行业网络</h3>
+                <p>加入我们的合作伙伴生态系统，拓展业务网络</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3>品牌提升</h3>
+                <p>与顶尖研究机构合作，提升企业技术品牌形象</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 合作伙伴 -->
+    <section class="partners-section" id="partners">
+        <div class="section-header">
+            <h2>合作伙伴</h2>
+            <p>我们与全球领先企业建立了长期合作关系</p>
+        </div>
+        
+        <div class="partners-grid">
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Tech+Corp" alt="Tech Corp">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Data+Systems" alt="Data Systems">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Quantum+AI" alt="Quantum AI">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Neural+Tech" alt="Neural Tech">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Cloud+Solutions" alt="Cloud Solutions">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Future+Systems" alt="Future Systems">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=AI+Vision" alt="AI Vision">
+            </div>
+            <div class="partner-logo">
+                <img src="https://via.placeholder.com/150x60?text=Deep+Learning+Inc" alt="Deep Learning Inc">
+            </div>
+        </div>
+    </section>
+    
+    <!-- 联系方式 -->
+    <section class="contact-section" id="contact">
+        <div class="section-header">
+            <h2>联系我们</h2>
+            <p>填写以下表单，我们的团队将尽快与您联系</p>
+        </div>
+        
+        <div class="contact-form">
+            <form>
+                <div class="form-group">
+                    <label for="name">公司名称</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact">联系人</label>
+                    <input type="text" id="contact" name="contact" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">电子邮箱</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">联系电话</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label for="interest">合作意向</label>
+                    <select id="interest" name="interest">
+                        <option value="research">联合研发</option>
+                        <option value="talent">人才招聘</option>
+                        <option value="consulting">技术咨询</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">详细需求</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">提交申请</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer id="footer" class="footer">
+        <a href="index.html" class="footer-logo">ACM实验室</a>
+        
+        <div class="footer-links">
+            <a href="Introduction to the Laboratory.html" class="footer-link">实验室简介</a>
+            <a href="Laboratory Charter.html" class="footer-link">实验室章程</a>
+            <a href="team.html" class="footer-link">团队</a>
+            <a href="paper.html" class="footer-link">论文</a>
+            <a href="algorithm.html" class="footer-link">算法</a>
+            <a href="science and technology innovation.html" class="footer-link">科创</a>
+            <a href="enterprise.html" class="footer-link">企业</a>
+            <a href="dynamic.html" class="footer-link">动态</a>
+            <a href="Recruitment for the Algorithm Group.html" class="footer-link">算法组招生</a>
+            <a href="Project team recruitment.html" class="footer-link">项目组招生</a>
+        </div>
+        
+        <div class="footer-social">
+            <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-weibo"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+        </div>
+        
+        <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 粒子动画初始化
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#605dff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#605dff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+</body>
+</html>

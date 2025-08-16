@@ -1,0 +1,2842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACM算法研究实验室</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css">
+    <link rel="stylesheet" href="assets/highlight.css">
+    <script defer src="assets/highlight.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#6C63FF',
+              secondary: '#00F0FF',
+              accent: '#FF2E63',
+              dark: '#121212',
+              'dark-light': '#1E1E1E',
+              'gray-custom': '#2D2D2D',
+            },
+            fontFamily: {
+              inter: ['Inter', 'sans-serif'],
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'glow': 'glow 2s ease-in-out infinite alternate',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              glow: {
+                '0%': { boxShadow: '0 0 5px rgba(108, 99, 255, 0.5), 0 0 10px rgba(108, 99, 255, 0.3)' },
+                '100%': { boxShadow: '0 0 10px rgba(108, 99, 255, 0.8), 0 0 20px rgba(108, 99, 255, 0.6), 0 0 30px rgba(108, 99, 255, 0.4)' },
+              }
+            }
+          },
+        }
+      }
+    </script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto { content-visibility: auto; }
+        .text-shadow { text-shadow: 0 0 10px rgba(108, 99, 255, 0.7); }
+        .text-gradient {
+          background-clip: text;
+          -webkit-background-clip: text;
+          color: transparent;
+        }
+        .bg-grid {
+          background-image: linear-gradient(rgba(108, 99, 255, 0.1) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(108, 99, 255, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        .clip-path-slant { clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
+        .glass {
+          backdrop-filter: blur(10px);
+          background: rgba(30, 30, 30, 0.7);
+        }
+      }
+    </style>
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #00ffcc;
+            --accent: #ff2d75;
+            --accent2: #b967ff;
+            --dark-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            --text-light: #e0e0ff;
+            --text: var(--text-light);
+            --glass: rgba(255, 255, 255, 0.05);
+            --gray-custom: #2d2d2d;
+            --dark: #0a0a1a;
+            --darker: #050510;
+            --light: #e0e0ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-light);
+            background: var(--dark-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 粒子背景 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-bottom: 1px solid rgba(58, 134, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .logo.active {
+            text-shadow: 0 0 15px rgba(58, 134, 255, 0.6);
+            transform: scale(1.05);
+        }
+        
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%233a86ff"><path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2zm0 2.8L18 10v9h-2v-6H8v6H6v-9l6-7.2z"/></svg>') no-repeat center;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .nav-link {
+            position: relative;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 500;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* 下拉菜单 */
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 220px;
+            background: rgba(10, 10, 26, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(58, 134, 255, 0.25);
+            border-radius: 8px;
+            padding: 0.6rem 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(6px);
+            transition: all 0.22s ease;
+            z-index: 200;
+            white-space: nowrap;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-link {
+            display: block;
+            padding: 0.5rem 1.25rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.18s ease;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .dropdown-link:hover {
+            background: rgba(58, 134, 255, 0.12);
+            color: var(--primary);
+            padding-left: 1.5rem;
+        }
+        
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        /* 全屏导航 */
+        .fullscreen-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+        }
+        
+        .fullscreen-nav.active {
+            transform: translateY(0);
+        }
+        
+        .fullscreen-nav .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+        
+        .fullscreen-nav .close-btn:hover {
+            color: var(--accent);
+        }
+        
+        .fullscreen-nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .fullscreen-nav-link {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .fullscreen-nav-link::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(58, 134, 255, 0.1);
+            z-index: -1;
+            transition: width 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover::before {
+            width: 100%;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(119, 0, 255, 0.1) 0%, rgba(10, 10, 26, 0.9) 70%);
+            z-index: -2;
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .hero h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(58, 134, 255, 0.35);
+            font-weight: 400;
+        }
+        
+        .hero p {
+            max-width: 800px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: var(--dark);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px var(--primary);
+        }
+        
+        .cta-button:hover::before {
+            opacity: 1;
+            animation: shine 1.5s infinite;
+        }
+        
+        @keyframes shine {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(0, 247, 255, 0.8), 0 0 30px rgba(0, 247, 255, 0.6), 0 0 40px rgba(255, 0, 170, 0.4);
+            }
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: var(--primary);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-100px) translateX(100px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+        
+        /* 按钮保留（供其他部分使用） */
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(58, 134, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(58, 134, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        /* 数据流光带 */
+        .data-stream {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: streamFlow 3s linear infinite;
+        }
+        
+        /* 内容部分 */
+        .section {
+            padding: 5rem 5%;
+            position: relative;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            bottom: -10px;
+            left: 25%;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+        }
+        
+        /* 实验室概况（迁移自 15/15.html，作用域限定在 #about） */
+        #about.section { padding: 8rem 10%; }
+        #about .section-header { text-align: center; margin-bottom: 5rem; }
+        #about .section-header h2 {
+            font-size: 2.8rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        #about .section-header p { max-width: 700px; margin: 0 auto; font-size: 1.2rem; color: rgba(224, 224, 255, 0.7); }
+        #about .cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
+        #about .card { background: rgba(18, 18, 48, 0.6); border-radius: 15px; overflow: hidden; transition: all 0.4s ease; backdrop-filter: blur(10px); border: 1px solid rgba(96, 93, 255, 0.2); position: relative; height: 100%; display: flex; flex-direction: column; }
+        #about .card::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; background: linear-gradient(45deg, var(--accent), var(--accent2), var(--accent)); z-index: -1; border-radius: 17px; opacity: 0; transition: opacity 0.4s ease; }
+        #about .card:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
+        #about .card:hover::before { opacity: 1; }
+        #about .card-icon { height: 200px; display: flex; justify-content: center; align-items: center; font-size: 4rem; background: linear-gradient(135deg, rgba(96, 93, 255, 0.1), rgba(0, 243, 255, 0.1)); color: var(--accent); }
+        #about .card-content { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
+        #about .card-content h3 { font-size: 1.8rem; margin-bottom: 1rem; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Orbitron', sans-serif; }
+        #about .card-content p { margin-bottom: 1.5rem; flex-grow: 1; }
+        #about .card-btn { display: inline-block; padding: 0.8rem 1.5rem; background: linear-gradient(45deg, var(--primary), var(--accent)); color: #0a0a1a; text-decoration: none; border-radius: 30px; text-align: center; transition: all 0.3s ease; align-self: flex-start; box-shadow: 0 0 12px rgba(58,134,255,0.35); }
+        #about .card-btn:hover { filter: brightness(1.1); transform: translateX(5px); box-shadow: 0 0 18px rgba(58,134,255,0.55); }
+        #about .card-icon i { 
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+        @media (max-width: 768px) {
+            #about.section { padding: 6rem 5%; }
+            #about .section-header h2 { font-size: 2.2rem; }
+        }
+        
+        /* 团队部分样式 */
+        #team.section {
+            background: #0a0a1a;
+            position: relative;
+        }
+        
+        .team-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(58, 134, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(58, 134, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+        
+        .team-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .team-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .bg-grid {
+            background-image: 
+                linear-gradient(rgba(58, 134, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(58, 134, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .team-gradient {
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .team-desc {
+            color: rgba(224, 224, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .team-underline {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        .team-subtitle {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-light);
+        }
+        
+        /* 团队领导网格 */
+        .team-leaders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        /* 3D卡片效果 */
+        .team-card-3d {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        
+        .team-card-3d::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .team-card-3d:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .team-card-3d:hover::before {
+            opacity: 1;
+        }
+        
+        .team-card-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 15px;
+        }
+        
+        /* 头像样式 */
+        .team-avatar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .team-avatar-wrapper {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .team-avatar-wrapper.primary-border {
+            border-color: transparent;
+        }
+        
+        .team-card-3d:hover .primary-border {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(58, 134, 255, 0.4);
+        }
+        
+        .team-avatar-wrapper.secondary-border {
+            border-color: transparent;
+        }
+        
+        .team-card-3d:hover .secondary-border {
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+        
+        .team-avatar-wrapper.accent-border {
+            border-color: transparent;
+        }
+        
+        .team-card-3d:hover .accent-border {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(255, 46, 99, 0.4);
+        }
+        
+        .team-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 团队成员信息 */
+        .team-member-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .team-member-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .primary-color { color: var(--primary); }
+        .secondary-color { color: var(--secondary); }
+        .accent-color { color: var(--accent); }
+        
+        .team-member-desc {
+            color: rgba(224, 224, 255, 0.7);
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* 社交链接 */
+        .team-social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .team-social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gray-custom);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .team-social-link.primary-hover:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .team-social-link.secondary-hover:hover {
+            background: var(--secondary);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+        
+        .team-social-link.accent-hover:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        /* 研究团队网格 */
+        .team-members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .team-member-card {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .team-member-card:hover {
+            background: var(--gray-custom);
+            transform: translateY(-5px);
+        }
+        
+        .team-member-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .team-member-card:hover .team-member-avatar {
+            border-color: var(--primary);
+        }
+        
+        .team-member-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .team-member-small-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-light);
+        }
+        
+        .team-member-small-title {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        
+        /* 查看更多按钮 */
+        .team-more-btn-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        .team-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            background: var(--gray-custom);
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .team-more-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .team-more-btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .team-more-btn:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .team-container {
+                padding: 0 1rem;
+            }
+            
+            .team-leaders-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .team-members-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .team-avatar-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .team-member-avatar {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .team-card-content {
+                padding: 1.5rem;
+            }
+            
+            .team-subtitle {
+                font-size: 1.6rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .team-members-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-leaders-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .team-card-content {
+                padding: 1rem;
+            }
+            
+            .team-avatar-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+        }
+        
+        /* 3D卡片效果（模板同步） */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-6px) rotateX(3deg);
+        }
+        
+        .card-3d::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, var(--accent), var(--secondary), var(--accent2));
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0.18;
+            transition: opacity 0.3s ease;
+            animation: rotate 14s linear infinite;
+        }
+        .card-3d:hover::before {
+            opacity: 0.32;
+        }
+        
+        @keyframes rotate {
+            0% { filter: brightness(0.85) saturate(0.7) hue-rotate(0deg); }
+            100% { filter: brightness(0.85) saturate(0.7) hue-rotate(360deg); }
+        }
+        
+        /* 恢复核心领导卡片原始效果，仅作用于该区块 */
+        .core-leaders .card-3d:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+        .core-leaders .card-3d::before {
+            opacity: 1;
+            transition: none;
+            animation: rotate-strong 6s linear infinite;
+        }
+        .core-leaders .card-3d:hover::before {
+            opacity: 1;
+        }
+        @keyframes rotate-strong {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        /* 论文展示 */
+        .papers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .paper-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(58, 134, 255, 0.1);
+            position: relative;
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(58, 134, 255, 0.2);
+            border-color: rgba(58, 134, 255, 0.3);
+        }
+        
+        .paper-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(58, 134, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .paper-card:hover::before {
+            opacity: 1;
+        }
+        
+        .paper-img {
+            height: 180px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+        }
+        
+        .paper-content {
+            padding: 1.5rem;
+        }
+        
+        .paper-title {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 500;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .paper-authors {
+            font-size: 0.9rem;
+            color: rgba(224, 224, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+        
+        .paper-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            color: rgba(224, 224, 255, 0.8);
+        }
+        
+        .paper-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .paper-link:hover {
+            color: var(--secondary);
+        }
+        
+        .paper-link svg {
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .paper-link:hover svg {
+            transform: translateX(5px);
+        }
+        
+        /* 算法展示 */
+        .algorithm-showcase {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            align-items: center;
+        }
+        
+        .algorithm-editor {
+            flex: 1;
+            background: #1e1e2e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .editor-header {
+            background: #2d2d42;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .editor-dots {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .editor-dot.red {
+            background: #ff5f56;
+        }
+        
+        .editor-dot.yellow {
+            background: #ffbd2e;
+        }
+        
+        .editor-dot.green {
+            background: #27c93f;
+        }
+        
+        .editor-title {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+        
+        .editor-content {
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #e0e0ff;
+            height: 300px;
+            overflow-y: auto;
+        }
+        
+        .algorithm-visualization {
+            flex: 1;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visualization-placeholder {
+            width: 80%;
+            height: 80%;
+            border: 2px dashed rgba(58, 134, 255, 0.3);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        /* 加入我们 */
+        .join-section {
+            text-align: center;
+        }
+        
+        .join-cards {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .join-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 2rem;
+            width: 300px;
+            transition: all 0.3s;
+            border: 1px solid rgba(58, 134, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .join-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(58, 134, 255, 0.2);
+            border-color: rgba(58, 134, 255, 0.3);
+        }
+        
+        .join-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(58, 134, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .join-card:hover::before {
+            opacity: 1;
+        }
+        
+        .join-card-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .join-card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .join-card-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: rgba(224, 224, 255, 0.8);
+        }
+        
+        /* 页脚（迁移自 9/9.html） */
+        .footer {
+            background: var(--dark-bg);
+            padding: 3rem 10%;
+            text-align: center;
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-logo.active {
+            text-shadow: 0 0 15px rgba(58, 134, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        .social-icon i {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .social-icon:hover i {
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            color: var(--dark);
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* 动画 */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        @keyframes streamFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+            
+            .algorithm-showcase {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .papers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 算法演示（从 18/18.html 移植的样式，作用于 #achievement-algorithms 区域） */
+        #achievement-algorithms .algo-demo {
+            background: rgba(10, 10, 30, 0.5);
+            padding: 2rem;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        #achievement-algorithms .algo-demo label {
+            display: block;
+            margin-bottom: 1rem;
+            color: #00f0ff;
+        }
+        #achievement-algorithms .algo-demo input[type="range"] {
+            width: 100%;
+            margin-bottom: 2rem;
+            accent-color: #00f0ff;
+        }
+        #achievement-algorithms #sort-result {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        #achievement-algorithms .sort-bar {
+            background: linear-gradient(to top, #0ff, #008888);
+            width: 10px;
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s ease;
+        }
+        #achievement-algorithms .glitch-btn {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, #0ff, #f0f);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        #achievement-algorithms .glitch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* 动态部分（从 11/新建 文本文档.html 迁移） */
+        .news-section {
+            background: transparent;
+            padding: 5rem 2rem;
+        }
+        .news-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 3rem auto 0;
+            padding-left: 50px;
+        }
+        .news-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20px;
+            height: 100%;
+            width: 2px;
+            background: var(--primary);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: rgba(20, 20, 40, 0.6);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.2);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: -33px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .timeline-date {
+            color: var(--secondary);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-title {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        .timeline-desc {
+            color: rgba(224, 224, 255, 0.8);
+            line-height: 1.6;
+        }
+        /* 加入我们（从模板迁移，作用域限定 #join） */
+        #join .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        #join .card-3d:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+        #join .card-3d::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(45deg, #6C63FF, #00F0FF, #FF2E63);
+            border-radius: inherit;
+            z-index: -1;
+            animation: rotate 6s linear infinite;
+        }
+        /* 覆写：加入我们与常见问题模块背景设为页面主背景 */
+        #join { background: transparent !important; }
+        #join > .absolute { display: none; }
+        #join .bg-dark,
+        #join .bg-dark-light { background: transparent !important; }
+        
+        /* 页面过渡遮罩层 */
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 255, 65, 0.1) 0%, rgba(0, 0, 0, 1) 100%);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .page-transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .transition-text {
+            color: #00ff41;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px #00ff41;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        .matrix-loader {
+            width: 100px;
+            height: 100px;
+            border: 2px solid transparent;
+            border-top: 2px solid #00ff41;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px #00ff41;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                text-shadow: 0 0 20px #00ff41;
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 30px #00ff41, 0 0 40px #00ff41;
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ACM LAB标题hover效果增强 */
+        #acm-lab-title {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        #acm-lab-title:hover {
+            transform: scale(1.05);
+            text-shadow: 
+                0 0 20px rgba(0, 247, 255, 0.8), 
+                0 0 30px rgba(0, 247, 255, 0.6), 
+                0 0 40px rgba(255, 0, 170, 0.4),
+                0 0 50px rgba(0, 255, 65, 0.3);
+        }
+        
+        /* 导航栏和页脚高亮样式 */
+        .nav-link.active,
+        .footer-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+        }
+        
+        .nav-link.active::after {
+            width: 100% !important;
+        }
+        
+        .dropdown-link.active {
+            color: var(--primary) !important;
+            background: rgba(58, 134, 255, 0.15) !important;
+            padding-left: 1.5rem !important;
+            font-weight: 500;
+        }
+        
+        .footer-link.active {
+            position: relative;
+        }
+        
+        .footer-link.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -3px;
+            left: 0;
+            background: var(--primary);
+        }
+       </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+    
+    <!-- 页面过渡遮罩层 -->
+    <div class="page-transition-overlay" id="pageTransition">
+        <div class="transition-text">正在进入 Matrix 世界...</div>
+        <div class="matrix-loader"></div>
+    </div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">ACM LAB</a>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="Introduction to the Laboratory.html" class="nav-link">实验室概况</a>
+                <div class="dropdown-content">
+                    <a href="Introduction to the Laboratory.html" class="dropdown-link">实验室简介</a>
+                    <a href="Laboratory Charter.html" class="dropdown-link">实验室章程</a>
+                </div>
+            </div>
+            
+            <a href="team.html" class="nav-link">团队</a>
+            
+            <div class="dropdown">
+                <a href="paper.html" class="nav-link">成果性展示</a>
+                <div class="dropdown-content">
+                    <a href="paper.html" class="dropdown-link">论文</a>
+                    <a href="algorithm.html" class="dropdown-link">算法</a>
+                    <a href="science and technology innovation.html" class="dropdown-link">科创</a>
+                    <a href="enterprise.html" class="dropdown-link">企业</a>
+                </div>
+            </div>
+            
+            <a href="dynamic.html" class="nav-link">动态</a>
+            
+            <div class="dropdown">
+                <a href="#join" class="nav-link">加入我们</a>
+                <div class="dropdown-content">
+                    <a href="Recruitment for the Algorithm Group.html" class="dropdown-link">算法组招生</a>
+                    <a href="Project team recruitment.html" class="dropdown-link">项目组招生</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">☰</div>
+        </nav>
+    
+    
+    
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="particles" id="particles"></div>
+        <h1 id="acm-lab-title" style="cursor: pointer;">ACM LAB</h1>
+        <h2>创新 · 研究 · 突破</h2>
+        <p>我们致力于前沿算法研究与创新应用，培养下一代计算机科学领袖，推动人工智能与计算理论的发展。</p>
+        <a href="#join" class="cta-button">加入我们</a>
+    </section>
+    
+    <!-- 实验室概况（迁移自 15/15.html） -->
+    <section class="section" id="about">
+        <div class="section-header">
+            <h2>实验室概况</h2>
+            <p>ACM实验室成立于2010年，是一个专注于算法研究的顶级实验室，拥有国际一流的研究团队和先进的实验设备</p>
+        </div>
+        
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div class="card-content">
+                    <h3>实验室简介</h3>
+                    <p>ACM实验室致力于解决计算科学领域的核心挑战，特别关注高效算法设计、分布式系统优化和人工智能前沿技术研究。</p>
+                    <a href="Introduction to the Laboratory.html" class="card-btn">了解更多</a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="card-content">
+                    <h3>实验室章程</h3>
+                    <p>我们的章程详细规定了实验室的使命、组织结构、研究方向和成员职责，确保实验室高效运作和持续创新。</p>
+                    <a href="Laboratory Charter.html" class="card-btn">查看章程</a>
+                </div>
+            </div>
+            
+    
+        </div>
+    </section>
+    
+    <!-- 团队 -->
+    <section id="team" class="py-24 relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-4">
+                    <span class="bg-gradient-to-r from-accent to-secondary text-gradient">团队</span>
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">我们的团队由顶尖学者、资深研究员和优秀学生组成，致力于算法领域的前沿研究与创新应用</p>
+                <div class="w-20 h-1 bg-gradient-to-r from-accent to-secondary mx-auto mt-4"></div>
+            </div>
+            
+            <!-- 团队领导 -->
+            <h3 class="text-2xl font-bold mb-8 text-center">核心领导</h3>
+            <div class="grid md:grid-cols-3 gap-8 mb-16 core-leaders">
+                <!-- 团队成员1 -->
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-transparent group-hover:border-primary transition-colors">
+                            <img src="https://picsum.photos/300/300?random=10" alt="张明教授，实验室主任" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="text-xl font-bold text-center mb-1">邱神</h4>
+                    <p class="text-secondary text-center mb-4">实验室主任</p>
+                    <p class="text-gray-400 text-center text-sm">
+                        前谷歌AI研究员，斯坦福大学博士，在顶级会议发表论文50余篇，主要研究方向为深度学习与自然语言处理。
+                    </p>
+                    <div class="flex justify-center mt-6 space-x-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-google"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 团队成员2 -->
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-transparent group-hover:border-secondary transition-colors">
+                            <img src="https://picsum.photos/300/300?random=11" alt="李华教授，副主任" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="text-xl font-bold text-center mb-1">曾神</h4>
+                    <p class="text-secondary text-center mb-4">副主任</p>
+                    <p class="text-gray-400 text-center text-sm">
+                        麻省理工学院博士后，主要研究方向为算法设计与分析、分布式计算，曾获国家自然科学奖。
+                    </p>
+                    <div class="flex justify-center mt-6 space-x-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-secondary transition-colors">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-secondary transition-colors">
+                            <i class="fa fa-google"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-secondary transition-colors">
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 团队成员3 -->
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-transparent group-hover:border-accent transition-colors">
+                            <img src="https://picsum.photos/300/300?random=12" alt="王静教授，学术委员会主席" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="text-xl font-bold text-center mb-1">代神</h4>
+                    <p class="text-secondary text-center mb-4">学术委员会主席</p>
+                    <p class="text-gray-400 text-center text-sm">
+                        清华大学博士，主要研究方向为计算机视觉与模式识别，主持多项国家级科研项目。
+                    </p>
+                    <div class="flex justify-center mt-6 space-x-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-accent transition-colors">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-accent transition-colors">
+                            <i class="fa fa-google"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-custom flex items-center justify-center hover:bg-accent transition-colors">
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 研究团队 -->
+            <h3 class="text-2xl font-bold mb-8 text-center">团队</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 团队成员4-12 -->
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=20" alt="刘博 研究员" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">刘博</h5>
+                    <p class="text-sm text-secondary">研究员</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=21" alt="陈颖 研究员" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">陈颖</h5>
+                    <p class="text-sm text-secondary">研究员</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=22" alt="赵伟 博士后" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">赵伟</h5>
+                    <p class="text-sm text-secondary">博士后</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=23" alt="孙琳 博士生" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">孙琳</h5>
+                    <p class="text-sm text-secondary">博士生</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=24" alt="周杰 博士生" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">周杰</h5>
+                    <p class="text-sm text-secondary">博士生</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=25" alt="吴芳 硕士生" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">吴芳</h5>
+                    <p class="text-sm text-secondary">硕士生</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=26" alt="郑强 硕士生" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">郑强</h5>
+                    <p class="text-sm text-secondary">硕士生</p>
+                </div>
+                
+                <div class="card-3d relative overflow-hidden bg-dark-light rounded-xl p-5 text-center hover:bg-gray-custom transition-colors group">
+                    <div class="w-28 h-28 rounded-full overflow-hidden mx-auto mb-4 border-2 border-transparent group-hover:border-primary transition-colors">
+                        <img src="https://picsum.photos/200/200?random=27" alt="林小 本科生" class="w-full h-full object-cover">
+                    </div>
+                    <h5 class="font-semibold">林小</h5>
+                    <p class="text-sm text-secondary">本科生</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="team.html" class="inline-flex items-center px-6 py-3 bg-gray-custom rounded-full hover:bg-primary transition-colors">
+                    查看全部成员
+                    <i class="fa fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 成果展示 -->
+    <section id="achievements" class="py-24 relative overflow-hidden">
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-4">
+                    <span class="bg-gradient-to-r from-primary to-accent text-gradient">成果展示</span>
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">我们在算法研究领域取得了一系列重要成果，包括学术论文、专利技术、科创项目和企业合作</p>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-accent mx-auto mt-4"></div>
+            </div>
+            
+            <!-- 成果分类标签 -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="achievement-tab px-6 py-2 rounded-full bg-gray-custom text-white font-medium hover:bg-primary/80 transition-colors">论文</button>
+                <button class="achievement-tab px-6 py-2 rounded-full bg-gray-custom text-white font-medium hover:bg-primary/80 transition-colors">算法</button>
+                <button class="achievement-tab px-6 py-2 rounded-full bg-gray-custom text-white font-medium hover:bg-primary/80 transition-colors">科创</button>
+                <button class="achievement-tab px-6 py-2 rounded-full bg-gray-custom text-white font-medium hover:bg-primary/80 transition-colors">企业合作</button>
+            </div>
+            
+            <!-- 论文成果 -->
+            <div class="achievement-content" id="achievement-papers">
+                <h3 class="text-2xl font-bold mb-8 text-center">学术论文</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 论文1 -->
+                    <div class="bg-dark rounded-xl overflow-hidden group hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <div class="h-48 bg-gray-custom flex items-center justify-center p-6">
+                            <div class="text-center">
+                                <i class="fa fa-file-text-o text-6xl text-primary/70 group-hover:text-primary transition-colors"></i>
+                                <p class="mt-4 text-gray-400">IEEE Transactions on Pattern Analysis and Machine Intelligence</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <span class="inline-block px-3 py-1 bg-primary/20 text-primary text-xs rounded-full mb-3">2023</span>
+                            <h4 class="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">基于注意力机制的深度学习图像分割算法研究</h4>
+                            <p class="text-gray-400 text-sm mb-4">提出了一种新型注意力机制，显著提升了复杂场景下图像分割的精度和效率。</p>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500">张明, 李华, 王静</p>
+                                <a href="paper.html" class="text-secondary hover:text-white transition-colors">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 论文2 -->
+                    <div class="bg-dark rounded-xl overflow-hidden group hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <div class="h-48 bg-gray-custom flex items-center justify-center p-6">
+                            <div class="text-center">
+                                <i class="fa fa-file-text-o text-6xl text-primary/70 group-hover:text-primary transition-colors"></i>
+                                <p class="mt-4 text-gray-400">NeurIPS</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <span class="inline-block px-3 py-1 bg-primary/20 text-primary text-xs rounded-full mb-3">2022</span>
+                            <h4 class="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">大规模图神经网络的高效训练方法</h4>
+                            <p class="text-gray-400 text-sm mb-4">针对大规模图数据，提出了一种分布式训练框架，将训练效率提升了3倍以上。</p>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500">刘博, 陈颖, 张明</p>
+                                <a href="paper.html" class="text-secondary hover:text-white transition-colors">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 论文3 -->
+                    <div class="bg-dark rounded-xl overflow-hidden group hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <div class="h-48 bg-gray-custom flex items-center justify-center p-6">
+                            <div class="text-center">
+                                <i class="fa fa-file-text-o text-6xl text-primary/70 group-hover:text-primary transition-colors"></i>
+                                <p class="mt-4 text-gray-400">ICML</p>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <span class="inline-block px-3 py-1 bg-primary/20 text-primary text-xs rounded-full mb-3">2022</span>
+                            <h4 class="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">联邦学习中的隐私保护与通信优化</h4>
+                            <p class="text-gray-400 text-sm mb-4">设计了一种新的联邦学习框架，在保证隐私的同时，降低了50%的通信开销。</p>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500">赵伟, 王静, 李华</p>
+                                <a href="paper.html" class="text-secondary hover:text-white transition-colors">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <a href="paper.html" class="inline-flex items-center px-6 py-3 border border-primary text-primary rounded-full hover:bg-primary hover:text-white transition-colors">
+                        查看更多论文
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 算法成果 -->
+            <div class="achievement-content hidden" id="achievement-algorithms">
+                <h3 class="text-2xl font-bold mb-8 text-center">算法成果</h3>
+                <!-- 算法模块：交互演示器（从 18/18.html 移植） -->
+                <div class="algo-demo">
+                    <label>数组长度：</label>
+                    <input type="range" min="5" max="50" id="array-length" value="15" />
+                    <div id="sort-result"></div>
+                    <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                        <button class="glitch-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;" id="bubble-sort">冒泡排序</button>
+                        <button class="glitch-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;" id="quick-sort">快速排序</button>
+                        <button class="glitch-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;" id="reset-array">重置数组</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 科创成果 -->
+            <div class="achievement-content hidden" id="achievement-innovation">
+                <h3 class="text-2xl font-bold mb-8 text-center">科创项目</h3>
+                <!-- 科创项目内容 -->
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="rounded-xl overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=30" alt="智能推荐系统平台" class="w-full h-auto">
+                    </div>
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-accent/20 text-accent text-xs rounded-full mb-3">国家级创新创业项目</span>
+                        <h4 class="text-2xl font-semibold mb-4">智能推荐系统平台</h4>
+                        <p class="text-gray-300 mb-6">
+                            基于自研的深度推荐算法，开发了一套适用于电商、内容平台的智能推荐系统，能够根据用户行为和偏好精准推荐内容，提升转化率35%以上。
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-gray-custom rounded-full text-sm">推荐算法</span>
+                            <span class="px-3 py-1 bg-gray-custom rounded-full text-sm">用户画像</span>
+                            <span class="px-3 py-1 bg-gray-custom rounded-full text-sm">实时计算</span>
+                            <span class="px-3 py-1 bg-gray-custom rounded-full text-sm">A/B测试</span>
+                        </div>
+                                                    <a href="science and technology innovation.html" class="inline-flex items-center px-6 py-3 bg-accent text-white rounded-full hover:bg-accent/80 transition-colors">
+                            了解项目详情
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-dark rounded-xl overflow-hidden group">
+                        <div class="h-40 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=31" alt="自动驾驶决策系统" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <h5 class="text-lg font-semibold mb-2">自动驾驶决策系统</h5>
+                            <p class="text-gray-400 text-sm mb-3">基于强化学习的自动驾驶决策系统，能够应对复杂交通场景。</p>
+                            <a href="#" class="text-sm text-secondary hover:text-white transition-colors">查看详情 →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark rounded-xl overflow-hidden group">
+                        <div class="h-40 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=32" alt="智能风控平台" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <h5 class="text-lg font-semibold mb-2">智能风控平台</h5>
+                            <p class="text-gray-400 text-sm mb-3">利用图神经网络和异常检测算法构建的智能风控系统。</p>
+                            <a href="#" class="text-sm text-secondary hover:text-white transition-colors">查看详情 →</a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark rounded-xl overflow-hidden group">
+                        <div class="h-40 overflow-hidden">
+                            <img src="https://picsum.photos/400/300?random=33" alt="医疗影像分析系统" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <h5 class="text-lg font-semibold mb-2">医疗影像分析系统</h5>
+                            <p class="text-gray-400 text-sm mb-3">基于深度学习的医疗影像分析系统，辅助医生进行疾病诊断。</p>
+                            <a href="#" class="text-sm text-secondary hover:text-white transition-colors">查看详情 →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 企业合作 -->
+            <div class="achievement-content hidden" id="achievement-enterprise">
+                <h3 class="text-2xl font-bold mb-8 text-center">企业合作</h3>
+                <!-- 合作企业展示 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                    <div class="bg-dark p-6 rounded-xl flex items-center justify-center h-32 hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <img src="https://picsum.photos/200/80?random=40" alt="合作企业A" class="max-h-16 max-w-full opacity-70 hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="bg-dark p-6 rounded-xl flex items-center justify-center h-32 hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <img src="https://picsum.photos/200/80?random=41" alt="合作企业B" class="max-h-16 max-w-full opacity-70 hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="bg-dark p-6 rounded-xl flex items-center justify-center h-32 hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <img src="https://picsum.photos/200/80?random=42" alt="合作企业C" class="max-h-16 max-w-full opacity-70 hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="bg-dark p-6 rounded-xl flex items-center justify-center h-32 hover:shadow-lg hover:shadow-primary/20 transition-all">
+                        <img src="https://picsum.photos/200/80?random=43" alt="合作企业D" class="max-h-16 max-w-full opacity-70 hover:opacity-100 transition-opacity">
+                    </div>
+                </div>
+                
+                <!-- 重点合作项目 -->
+                <div class="bg-dark rounded-2xl p-8 border border-white/10 mb-12">
+                    <div class="grid md:grid-cols-5 gap-8">
+                        <div class="md:col-span-2">
+                            <span class="inline-block px-3 py-1 bg-primary/20 text-primary text-xs rounded-full mb-3">战略合作项目</span>
+                            <h4 class="text-2xl font-semibold mb-4">智能城市交通流量预测系统</h4>
+                            <p class="text-gray-300 mb-6">
+                                与智慧城市科技有限公司合作开发的交通流量预测系统，采用时空图神经网络算法，实现了城市道路网络交通流量的精准预测，准确率达到92%。
+                            </p>
+                            <div class="space-y-3 mb-6">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>项目完成度</span>
+                                        <span>95%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-gray-custom rounded-full overflow-hidden">
+                                        <div class="h-full bg-primary rounded-full" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>客户满意度</span>
+                                        <span>98%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-gray-custom rounded-full overflow-hidden">
+                                        <div class="h-full bg-secondary rounded-full" style="width: 98%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="enterprise.html" class="inline-flex items-center text-primary hover:text-white transition-colors">
+                                查看合作案例
+                                <i class="fa fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                        <div class="md:col-span-3">
+                            <img src="https://picsum.photos/800/400?random=44" alt="智能城市交通流量预测系统展示" class="w-full h-full object-cover rounded-xl">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a href="enterprise.html" class="inline-flex items-center px-6 py-3 bg-gray-custom rounded-full hover:bg-primary transition-colors">
+                        了解更多合作项目
+                        <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- 动态部分（从 11/新建 文本文档.html 迁移） -->
+    <section class="news-section" id="news">
+        <div class="section">
+            <h2 class="section-title">实验室动态</h2>
+            <div class="news-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2023.06.15</div>
+                    <h3 class="timeline-title">张教授团队在NeurIPS发表最新研究成果</h3>
+                    <p class="timeline-desc">张教授团队在神经信息处理系统大会(NeurIPS)上发表关于多模态学习的最新研究，提出了一种创新的跨模态表示学习方法。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2023.04.22</div>
+                    <h3 class="timeline-title">实验室与DeepMind建立合作关系</h3>
+                    <p class="timeline-desc">ACM实验室与DeepMind签署战略合作协议，将在强化学习和多智能体系统领域开展深度合作。</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2023.02.10</div>
+                    <h3 class="timeline-title">年度学术研讨会成功举办</h3>
+                    <p class="timeline-desc">实验室成功举办2023年度学术研讨会，邀请了来自MIT、Stanford等高校的知名学者做主题报告。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 加入我们（从模板迁移） -->
+    <section id="join" class="py-24 bg-gradient-to-b from-dark-light to-dark relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-96 bg-primary/5 blur-3xl"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.5rem,5vw,3rem)] font-bold mb-4">
+                    <span class="bg-gradient-to-r from-primary to-secondary text-gradient">加入我们</span>
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">我们正在寻找对算法研究充满热情的优秀人才加入团队，共同探索科技前沿</p>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mt-4"></div>
+            </div>
+            
+            <!-- 招生分类 -->
+            <div class="grid md:grid-cols-2 gap-10 mb-16">
+                <!-- 算法组招生 -->
+                <div class="bg-dark rounded-2xl overflow-hidden group relative card-3d">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors"></div>
+                    <div class="p-8 relative z-10">
+                        <div class="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-code text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">算法组招生</h3>
+                        <p class="text-gray-300 mb-6">
+                            算法组专注于基础算法理论研究，包括但不限于复杂度分析、近似算法、在线算法、并行算法等方向，欢迎对理论研究有浓厚兴趣的同学加入。
+                        </p>
+                        <h4 class="text-lg font-semibold mb-3 text-secondary">我们希望你：</h4>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                                <span>具备扎实的数学基础和算法理论知识</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                                <span>熟练掌握至少一种编程语言（C++/Python）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                                <span>有相关算法竞赛经历或研究项目经验者优先</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-3"></i>
+                                <span>具备良好的英文阅读能力和学术写作能力</span>
+                            </li>
+                        </ul>
+                        <a href="Recruitment for the Algorithm Group.html" class="inline-block px-8 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/80 transition-colors animate-glow">
+                            申请加入
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 项目组招生 -->
+                <div class="bg-dark rounded-2xl overflow-hidden group relative card-3d">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl group-hover:bg-secondary/20 transition-colors"></div>
+                    <div class="p-8 relative z-10">
+                        <div class="w-16 h-16 rounded-xl bg-secondary/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-cogs text-secondary text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">项目组招生</h3>
+                        <p class="text-gray-300 mb-6">
+                            项目组专注于算法的实际应用与系统开发，参与企业合作项目和科研转化项目，将算法理论落地到实际系统中，欢迎对工程实现有兴趣的同学加入。
+                        </p>
+                        <h4 class="text-lg font-semibold mb-3 text-secondary">我们希望你：</h4>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-3"></i>
+                                <span>具备较强的编程能力和系统设计能力</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-3"></i>
+                                <span>熟悉至少一种深度学习框架（PyTorch/TensorFlow）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-3"></i>
+                                <span>有实际项目开发经验或开源项目贡献者优先</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-3"></i>
+                                <span>具备良好的团队协作能力和问题解决能力</span>
+                            </li>
+                        </ul>
+                        <a href="Project team recruitment.html" class="inline-block px-8 py-3 bg-secondary text-dark font-medium rounded-full hover:bg-secondary/80 transition-colors animate-glow">
+                            申请加入
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 常见问题 -->
+            <div class="max-w-3xl mx-auto">
+                <h3 class="text-2xl font-bold mb-8 text-center">常见问题</h3>
+                <div class="space-y-4">
+                    <div class="bg-dark-light rounded-xl overflow-hidden">
+                        <button class="faq-toggle w-full text-left p-6 focus:outline-none flex justify-between items-center">
+                            <span class="font-semibold">实验室招收哪些年级的学生？有专业限制吗？</span>
+                            <i class="fa fa-plus text-primary transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-400">
+                                我们招收本科生（主要是大二及以上）、硕士研究生和博士研究生，专业以计算机科学、软件工程、数学、自动化等相关专业为主，但不限于这些专业，只要对算法研究有浓厚兴趣并具备相应基础的同学都可以申请。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-light rounded-xl overflow-hidden">
+                        <button class="faq-toggle w-full text-left p-6 focus:outline-none flex justify-between items-center">
+                            <span class="font-semibold">加入实验室需要具备哪些基础？如何提升自己的竞争力？</span>
+                            <i class="fa fa-plus text-primary transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-400">
+                                基本要求包括扎实的数学基础（线性代数、概率论、微积分）、良好的编程能力和算法基础。建议有意向的同学多参与算法竞赛、阅读相关领域的论文、进行小型项目实践来提升自己的竞争力。我们也会提供入门指导和培训。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-light rounded-xl overflow-hidden">
+                        <button class="faq-toggle w-full text-left p-6 focus:outline-none flex justify-between items-center">
+                            <span class="font-semibold">实验室的工作时间和强度是怎样的？</span>
+                            <i class="fa fa-plus text-primary transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-400">
+                                实验室实行弹性工作制度，没有严格的坐班要求，但我们希望成员能够保证足够的科研时间投入。根据项目进展和个人目标不同，每周工作时间一般在20-40小时。我们鼓励高效工作，注重工作与学习的平衡。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-dark-light rounded-xl overflow-hidden">
+                        <button class="faq-toggle w-full text-left p-6 focus:outline-none flex justify-between items-center">
+                            <span class="font-semibold">加入实验室后能获得哪些资源和支持？</span>
+                            <i class="fa fa-plus text-primary transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-400">
+                                实验室为成员提供良好的科研环境，包括高性能计算资源、文献数据库访问权限、学术交流机会等。成员可以参与国家级科研项目和企业合作项目，在导师指导下发表学术论文、申请专利。优秀成员还将获得推荐深造或就业的机会。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 页脚 -->
+    <footer id="footer" class="footer">
+        <a href="index.html" class="footer-logo">ACM实验室</a>
+        
+        <div class="footer-links">
+            <a href="Introduction to the Laboratory.html" class="footer-link">实验室简介</a>
+            <a href="Laboratory Charter.html" class="footer-link">实验室章程</a>
+            <a href="team.html" class="footer-link">团队</a>
+            <a href="paper.html" class="footer-link">论文</a>
+            <a href="algorithm.html" class="footer-link">算法</a>
+            <a href="science and technology innovation.html" class="footer-link">科创</a>
+            <a href="enterprise.html" class="footer-link">企业</a>
+            <a href="dynamic.html" class="footer-link">动态</a>
+            <a href="Recruitment for the Algorithm Group.html" class="footer-link">算法组招生</a>
+            <a href="Project team recruitment.html" class="footer-link">项目组招生</a>
+        </div>
+        
+        <div class="footer-social">
+            <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-weibo"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+        </div>
+        
+        <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 全屏导航切换（元素存在时才绑定，兼容已删除全屏菜单的情况）
+        const menuToggle = document.querySelector('.menu-toggle');
+        const closeBtn = document.querySelector('.close-btn');
+        const fullscreenNav = document.querySelector('.fullscreen-nav');
+        
+        if (menuToggle && fullscreenNav) {
+            menuToggle.addEventListener('click', () => {
+                fullscreenNav.classList.add('active');
+            });
+        }
+        
+        if (closeBtn && fullscreenNav) {
+            closeBtn.addEventListener('click', () => {
+                fullscreenNav.classList.remove('active');
+            });
+        }
+        
+        // 粒子背景初始化
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#3a86ff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#3a86ff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+        
+        // 滚动动画
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section');
+            const windowHeight = window.innerHeight;
+            
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop < windowHeight - 100) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        });
+        
+        // 初始化部分显示
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(50px)';
+                section.style.transition = 'all 0.6s ease-out';
+            });
+            
+            // 触发第一个部分的显示
+            if (sections.length > 0) {
+                sections[0].style.opacity = '1';
+                sections[0].style.transform = 'translateY(0)';
+            }
+
+            // 英雄区域粒子效果
+            const particlesContainer = document.getElementById('particles');
+            if (particlesContainer) {
+                const particleCount = 50;
+                const colors = ['#00f0ff', '#ff00aa', '#7700ff', '#ffffff'];
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    const size = Math.random() * 5 + 1;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    const duration = Math.random() * 20 + 10;
+                    particle.style.animationDuration = `${duration}s`;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.backgroundColor = color;
+                    particlesContainer.appendChild(particle);
+                                 }
+             }
+         });
+         
+         // 成果展示：标签切换与图表初始化
+         document.addEventListener('DOMContentLoaded', function() {
+             const achievementTabs = document.querySelectorAll('.achievement-tab');
+             const sections = {
+                 '全部成果': document.getElementById('achievement-papers'),
+                 '论文': document.getElementById('achievement-papers'),
+                 '算法': document.getElementById('achievement-algorithms'),
+                 '科创': document.getElementById('achievement-innovation'),
+                 '企业合作': document.getElementById('achievement-enterprise'),
+             };
+             if (achievementTabs.length) {
+                 achievementTabs.forEach(tab => {
+                     tab.addEventListener('click', function() {
+                         achievementTabs.forEach(t => {
+                             t.classList.remove('active', 'bg-primary');
+                             t.classList.add('bg-gray-custom');
+                         });
+                         this.classList.add('active', 'bg-primary');
+                         this.classList.remove('bg-gray-custom');
+                         Object.values(sections).forEach(el => el && el.classList.add('hidden'));
+                         const target = sections[this.textContent.trim()];
+                         if (target) target.classList.remove('hidden');
+                     });
+                 });
+             }
+             const chartCanvas = document.getElementById('algorithmChart');
+             if (chartCanvas && window.Chart) {
+                 const ctx = chartCanvas.getContext('2d');
+                 new Chart(ctx, {
+                     type: 'line',
+                     data: {
+                         labels: ['100', '500', '1000', '5000', '10000', '50000'],
+                         datasets: [
+                             { label: '传统算法', data: [12, 45, 98, 480, 950, 4700], borderColor: '#FF2E63', backgroundColor: 'rgba(255, 46, 99, 0.1)', tension: 0.4, fill: true },
+                             { label: '我们的算法', data: [8, 25, 52, 230, 450, 2100], borderColor: '#6C63FF', backgroundColor: 'rgba(108, 99, 255, 0.1)', tension: 0.4, fill: true }
+                         ]
+                     },
+                     options: {
+                         responsive: true,
+                         plugins: { title: { display: true, text: '算法性能对比 (计算时间 ms)', color: '#fff' }, legend: { labels: { color: '#fff' } } },
+                         scales: {
+                             x: { title: { display: true, text: '数据规模', color: '#ccc' }, ticks: { color: '#ccc' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                             y: { title: { display: true, text: '计算时间 (ms)', color: '#ccc' }, ticks: { color: '#ccc' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                         }
+                     }
+                 });
+             }
+         });
+     </script>
+    
+    <!-- 算法演示：排序可视化（从 18/18.html 移植，作用于 #algorithms 部分） -->
+    <script>
+        // 算法演示：排序可视化（从 18/18.html 移植，作用于 #algorithms 部分）
+        (function() {
+            const arrayLengthSlider = document.getElementById('array-length');
+            const sortResult = document.getElementById('sort-result');
+            const bubbleSortBtn = document.getElementById('bubble-sort');
+            const quickSortBtn = document.getElementById('quick-sort');
+            const resetArrayBtn = document.getElementById('reset-array');
+            if (!arrayLengthSlider || !sortResult || !bubbleSortBtn || !quickSortBtn || !resetArrayBtn) return;
+            let sortData = [];
+            let isSorting = false;
+            function generateRandomArray(length) {
+                return Array.from({ length }, () => Math.floor(Math.random() * 150) + 30);
+            }
+            function drawSortResult() {
+                sortResult.innerHTML = '';
+                sortData.forEach(val => {
+                    const bar = document.createElement('div');
+                    bar.className = 'sort-bar';
+                    bar.style.height = `${val}px`;
+                    sortResult.appendChild(bar);
+                });
+            }
+            function resetArray() {
+                if (isSorting) return;
+                const length = parseInt(arrayLengthSlider.value);
+                sortData = generateRandomArray(length);
+                drawSortResult();
+            }
+            async function bubbleSort() {
+                if (isSorting) return;
+                isSorting = true;
+                disableSortButtons(true);
+                const bars = sortResult.querySelectorAll('.sort-bar');
+                for (let i = 0; i < sortData.length; i++) {
+                    for (let j = 0; j < sortData.length - i - 1; j++) {
+                        bars[j].style.background = 'linear-gradient(to top, #f0f, #880088)';
+                        bars[j + 1].style.background = 'linear-gradient(to top, #f0f, #880088)';
+                        if (sortData[j] > sortData[j + 1]) {
+                            [sortData[j], sortData[j + 1]] = [sortData[j + 1], sortData[j]];
+                            bars[j].style.height = `${sortData[j]}px`;
+                            bars[j + 1].style.height = `${sortData[j + 1]}px`;
+                            await new Promise(resolve => setTimeout(resolve, 50));
+                        }
+                        bars[j].style.background = 'linear-gradient(to top, #0ff, #008888)';
+                        bars[j + 1].style.background = 'linear-gradient(to top, #0ff, #008888)';
+                        bars[sortData.length - i - 1].style.background = 'linear-gradient(to top, #0f0, #008800)';
+                    }
+                    bars[sortData.length - i - 1].style.background = 'linear-gradient(to top, #0f0, #008800)';
+                }
+                isSorting = false;
+                disableSortButtons(false);
+            }
+            async function quickSort() {
+                if (isSorting) return;
+                isSorting = true;
+                disableSortButtons(true);
+                const bars = sortResult.querySelectorAll('.sort-bar');
+                async function partition(low, high) {
+                    const pivot = sortData[high];
+                    let i = low - 1;
+                    bars[high].style.background = 'linear-gradient(to top, #ff0, #888800)';
+                    for (let j = low; j <= high - 1; j++) {
+                        bars[j].style.background = 'linear-gradient(to top, #f0f, #880088)';
+                        if (sortData[j] < pivot) {
+                            i++;
+                            [sortData[i], sortData[j]] = [sortData[j], sortData[i]];
+                            bars[i].style.height = `${sortData[i]}px`;
+                            bars[j].style.height = `${sortData[j]}px`;
+                            await new Promise(resolve => setTimeout(resolve, 30));
+                        }
+                        if (j !== i) {
+                            bars[j].style.background = 'linear-gradient(to top, #0ff, #008888)';
+                        }
+                    }
+                    [sortData[i + 1], sortData[high]] = [sortData[high], sortData[i + 1]];
+                    bars[i + 1].style.height = `${sortData[i + 1]}px`;
+                    bars[high].style.height = `${sortData[high]}px`;
+                    bars[high].style.background = 'linear-gradient(to top, #0ff, #008888)';
+                    await new Promise(resolve => setTimeout(resolve, 30));
+                    return i + 1;
+                }
+                async function quickSortRecursive(low, high) {
+                    if (low < high) {
+                        const pi = await partition(low, high);
+                        bars[pi].style.background = 'linear-gradient(to top, #0f0, #008800)';
+                        await quickSortRecursive(low, pi - 1);
+                        await quickSortRecursive(pi + 1, high);
+                    } else if (low === high) {
+                        bars[low].style.background = 'linear-gradient(to top, #0f0, #008800)';
+                    }
+                }
+                await quickSortRecursive(0, sortData.length - 1);
+                isSorting = false;
+                disableSortButtons(false);
+            }
+            function disableSortButtons(disabled) {
+                bubbleSortBtn.disabled = disabled;
+                quickSortBtn.disabled = disabled;
+                arrayLengthSlider.disabled = disabled;
+                const opacity = disabled ? '0.5' : '1';
+                bubbleSortBtn.style.opacity = opacity;
+                quickSortBtn.style.opacity = opacity;
+                arrayLengthSlider.style.opacity = opacity;
+            }
+            arrayLengthSlider.addEventListener('input', resetArray);
+            bubbleSortBtn.addEventListener('click', bubbleSort);
+            quickSortBtn.addEventListener('click', quickSort);
+            resetArrayBtn.addEventListener('click', resetArray);
+            // 初始化
+            resetArray();
+        })();
+        </script>
+
+    <!-- 动态部分滚动动画（仅作用于 .timeline-item） -->
+    <script>
+        (function() {
+            function animateNewsOnScroll() {
+                const elements = document.querySelectorAll('.timeline-item');
+                elements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.2;
+                    if (elementPosition < screenPosition) {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+            window.addEventListener('load', () => {
+                const elements = document.querySelectorAll('.timeline-item');
+                elements.forEach(element => {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(20px)';
+                    element.style.transition = 'all 0.5s ease';
+                });
+                animateNewsOnScroll();
+            });
+            window.addEventListener('scroll', animateNewsOnScroll);
+        })();
+    </script>
+    <!-- 加入我们：FAQ 折叠交互（从模板迁移） -->
+    <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                const faqToggles = document.querySelectorAll('.faq-toggle');
+                faqToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        const content = this.nextElementSibling;
+                        const icon = this.querySelector('i');
+                        content.classList.toggle('hidden');
+                        if (content.classList.contains('hidden')) {
+                            icon.classList.remove('fa-minus', 'rotate-45');
+                            icon.classList.add('fa-plus');
+                        } else {
+                            icon.classList.remove('fa-plus');
+                            icon.classList.add('fa-minus', 'rotate-45');
+                        }
+                    });
+                });
+            });
+        })();
+    </script>
+    
+    <!-- ACM LAB标题点击跳转效果 -->
+    <script>
+        (function() {
+            const acmLabTitle = document.getElementById('acm-lab-title');
+            const pageTransition = document.getElementById('pageTransition');
+            
+            if (acmLabTitle && pageTransition) {
+                acmLabTitle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 触发过渡动画
+                    pageTransition.classList.add('active');
+                    
+                    // 添加音效（如果需要）
+                    // 可以在这里添加点击音效
+                    
+                    // 延迟跳转，让过渡动画完成
+                    setTimeout(() => {
+                        window.location.href = '满屏文字.html';
+                    }, 1500); // 1.5秒后跳转
+                });
+                
+                // 增强hover效果
+                acmLabTitle.addEventListener('mouseenter', function() {
+                    this.style.filter = 'brightness(1.2)';
+                });
+                
+                acmLabTitle.addEventListener('mouseleave', function() {
+                    this.style.filter = 'brightness(1)';
+                });
+            }
+        })();
+    </script>
+
+    <!-- 导航栏和页脚高亮显示当前页面 -->
+    <script>
+        (function() {
+            // 页面加载完成后执行
+            document.addEventListener('DOMContentLoaded', function() {
+                // 获取当前页面文件名
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                
+                // 页面映射关系
+                const pageMapping = {
+                    'index.html': {
+                        navSelector: '.logo', // 首页高亮logo
+                        footerText: 'ACM实验室'
+                    },
+                    'Introduction to the Laboratory.html': {
+                        navText: '实验室概况',
+                        dropdownText: '实验室简介',
+                        footerText: '实验室简介'
+                    },
+                    'Laboratory Charter.html': {
+                        navText: '实验室概况', 
+                        dropdownText: '实验室章程',
+                        footerText: '实验室章程'
+                    },
+                    'team.html': {
+                        navText: '团队',
+                        footerText: '团队'
+                    },
+                    'paper.html': {
+                        navText: '成果性展示',
+                        dropdownText: '论文',
+                        footerText: '论文'
+                    },
+                    'algorithm.html': {
+                        navText: '成果性展示',
+                        dropdownText: '算法', 
+                        footerText: '算法'
+                    },
+                    'science and technology innovation.html': {
+                        navText: '成果性展示',
+                        dropdownText: '科创',
+                        footerText: '科创'
+                    },
+                    'enterprise.html': {
+                        navText: '成果性展示',
+                        dropdownText: '企业',
+                        footerText: '企业'
+                    },
+                    'dynamic.html': {
+                        navText: '动态',
+                        footerText: '动态'
+                    },
+                    'Recruitment for the Algorithm Group.html': {
+                        navText: '加入我们',
+                        dropdownText: '算法组招生',
+                        footerText: '算法组招生'
+                    },
+                    'Project team recruitment.html': {
+                        navText: '加入我们',
+                        dropdownText: '项目组招生',
+                        footerText: '项目组招生'
+                    }
+                };
+                
+                const currentPageInfo = pageMapping[currentPage];
+                if (!currentPageInfo) return;
+                
+                // 处理导航栏高亮
+                if (currentPageInfo.navSelector) {
+                    // 特殊选择器（如logo）
+                    const element = document.querySelector(currentPageInfo.navSelector);
+                    if (element) {
+                        element.classList.add('active');
+                    }
+                } else if (currentPageInfo.navText) {
+                    // 主导航链接高亮
+                    const navLinks = document.querySelectorAll('.nav-link');
+                    navLinks.forEach(link => {
+                        if (link.textContent.trim() === currentPageInfo.navText) {
+                            link.classList.add('active');
+                        }
+                    });
+                    
+                    // 下拉菜单项高亮
+                    if (currentPageInfo.dropdownText) {
+                        const dropdownLinks = document.querySelectorAll('.dropdown-link');
+                        dropdownLinks.forEach(link => {
+                            if (link.textContent.trim() === currentPageInfo.dropdownText) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                }
+                
+                // 处理页脚高亮
+                if (currentPageInfo.footerText) {
+                    const footerLinks = document.querySelectorAll('.footer-link');
+                    footerLinks.forEach(link => {
+                        if (link.textContent.trim() === currentPageInfo.footerText) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+                
+                // 特殊处理：如果是首页，高亮页脚的ACM实验室logo
+                if (currentPage === 'index.html') {
+                    const footerLogo = document.querySelector('.footer-logo');
+                    if (footerLogo) {
+                        footerLogo.classList.add('active');
+                    }
+                }
+            });
+        })();
+    </script>
+       </body>
+   </html>

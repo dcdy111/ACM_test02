@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACM算法研究实验室</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/v4-shims.min.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script defer src="assets/highlight.js"></script>
+    
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-blue': '#0B1C48',
+                        'cyber-dark': '#050A1A',
+                        'cyber-gray': '#2C3E50',
+                        'cyber-cyan': '#00F0FF',
+                        'cyber-silver': '#E6E6FA',
+                        'cyber-pink': '#FF00FF',
+                        'cyber-purple': '#9D00FF'
+                    },
+                    fontFamily: {
+                        'cyber': ['Orbitron', 'sans-serif', 'system-ui']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #00ffcc;
+            --accent: #ff2d75;
+            --accent2: #b967ff;
+            --dark-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            --text-light: #e0e0ff;
+            --text: var(--text-light);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-light);
+            background: var(--dark-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 新增Tailwind自定义工具类 */
+        .text-glow {
+            text-shadow: 0 0 10px #00F0FF, 0 0 20px #00F0FF;
+        }
+        .neon-border {
+            position: relative;
+            border: 1px solid #00F0FF;
+        }
+        .neon-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            box-shadow: 0 0 15px #00F0FF, 0 0 30px rgba(0, 240, 255, 0.3);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .glass-effect {
+            background: rgba(11, 28, 72, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        
+        /* 额外支持样式 */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .container {
+            max-width: 1200px;
+        }
+        
+        /* 响应式网格 */
+        @media (min-width: 1024px) {
+            .lg\\:grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .md\\:grid-cols-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* 粒子背景（展示相关，保留） */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* 导航栏（展示相关，保留） */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-bottom: 1px solid rgba(58, 134, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%233a86ff"><path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2zm0 2.8L18 10v9h-2v-6H8v6H6v-9l6-7.2z"/></svg>') no-repeat center;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .nav-link {
+            position: relative;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 500;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover { color: var(--primary); }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after { width: 100%; }
+        
+        /* 下拉菜单（展示相关，保留） */
+        .dropdown { position: relative; }
+        
+        .dropdown-content {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: 220px;
+            background: rgba(10, 10, 26, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(58, 134, 255, 0.25);
+            border-radius: 8px;
+            padding: 0.6rem 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(6px);
+            transition: all 0.22s ease;
+            z-index: 200;
+            white-space: nowrap;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-link {
+            display: block;
+            padding: 0.5rem 1.25rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.18s ease;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .dropdown-link:hover {
+            background: rgba(58, 134, 255, 0.12);
+            color: var(--primary);
+            padding-left: 1.5rem;
+        }
+        
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        
+        /* 全屏导航 */
+        .fullscreen-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+        }
+        
+        .fullscreen-nav.active {
+            transform: translateY(0);
+        }
+        
+        .fullscreen-nav .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+        
+        .fullscreen-nav .close-btn:hover {
+            color: var(--accent);
+        }
+        
+        .fullscreen-nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .fullscreen-nav-link {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .fullscreen-nav-link::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(58, 134, 255, 0.1);
+            z-index: -1;
+            transition: width 0.3s;
+        }
+        
+        .fullscreen-nav-link:hover::before {
+            width: 100%;
+        }
+        
+        /* 页脚（展示相关，保留） */
+        footer {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 3rem 5%;
+            text-align: center;
+            margin-top: 5rem;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link { color: var(--text-light); text-decoration: none; transition: color 0.3s; }
+        .footer-link:hover { color: var(--primary); }
+        
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon i {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .social-icon:hover i {
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            color: var(--dark);
+        }
+        
+        .copyright { font-size: 0.9rem; color: rgba(224, 224, 255, 0.6); }
+        
+        /* 必要动画（logo 脉冲） */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        
+        /* 论文页面样式 */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8rem 5% 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            opacity: 0.9;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(74, 0, 224, 0.2);
+            color: white;
+            border: 1px solid rgba(142, 45, 226, 0.5);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(142, 45, 226, 0.3);
+        }
+        
+        .papers-container {
+            padding: 3rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .paper-card {
+            background: #121226;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+        
+        .paper-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff0080, #b967ff);
+            transition: all 0.4s ease;
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(74, 0, 224, 0.3);
+        }
+        
+        .paper-card:hover::before {
+            width: 100%;
+            opacity: 0.1;
+        }
+        
+        .paper-card.quantum {
+            border-left-color: #8e2de2;
+        }
+        
+        .paper-card.ai {
+            border-left-color: #00c6ff;
+        }
+        
+        .paper-card.crypto {
+            border-left-color: #ff00cc;
+        }
+        
+        .paper-card.theory {
+            border-left-color: #00ff9d;
+        }
+        
+        .paper-header {
+            padding: 1.5rem;
+            background: rgba(20, 20, 40, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        .paper-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        /* 新增样式：h3标题 */
+        .paper-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #00F0FF;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+        }
+        
+        .paper-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: #b967ff;
+        }
+        
+        .paper-authors {
+            font-style: italic;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .paper-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(74, 0, 224, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+        }
+        
+        .paper-meta i {
+            font-size: 0.8rem;
+        }
+        
+        /* 新增样式：作者信息 */
+        .paper-card .authors {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+        
+        .paper-card .authors .author {
+            display: flex;
+            align-items: center;
+            margin-right: 1.5rem;
+        }
+        
+        .paper-card .authors .author img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            border: 2px solid #00F0FF;
+        }
+        
+        /* 新增样式：元信息 */
+        .paper-card .meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: rgba(224, 224, 255, 0.7);
+        }
+        
+        .paper-card .meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .paper-card .meta-item i {
+            margin-right: 0.5rem;
+            color: #00F0FF;
+        }
+        
+        .paper-content {
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .paper-abstract {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
+        /* 新增样式：摘要容器 */
+        .paper-card .abstract {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
+        .paper-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* 新增样式：链接容器 */
+        .paper-card .links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .paper-link {
+            padding: 0.5rem 1.2rem;
+            background: rgba(142, 45, 226, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(142, 45, 226, 0.3);
+        }
+        
+        /* 新增样式：单个链接 */
+        .paper-card .link {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 30px;
+            color: #00F0FF;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .paper-card .link:hover {
+            background: #00F0FF;
+            color: var(--dark-bg);
+            transform: translateY(-3px);
+        }
+        
+        .paper-link:hover {
+            background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(142, 45, 226, 0.3);
+        }
+        
+        .paper-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-quantum {
+            background: rgba(142, 45, 226, 0.2);
+            color: #c792ea;
+        }
+        
+        .badge-ai {
+            background: rgba(0, 198, 255, 0.2);
+            color: #00c6ff;
+        }
+        
+        .badge-crypto {
+            background: rgba(255, 0, 204, 0.2);
+            color: #ff00cc;
+        }
+        
+        .badge-theory {
+            background: rgba(0, 255, 157, 0.2);
+            color: #00ff9d;
+        }
+        
+        /* 新增渐变文字效果 */
+        .gradient-text {
+            background: linear-gradient(90deg, #00F0FF, #b967ff, #ff0080);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .paper-header {
+                padding: 1rem;
+            }
+            
+            .paper-title {
+                font-size: 1.3rem;
+            }
+            
+            .paper-badge {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">ACM LAB</a>
+        <div class="nav-links">
+            <div class="dropdown">
+                <a href="Introduction to the Laboratory.html" class="nav-link">实验室概况</a>
+                <div class="dropdown-content">
+                    <a href="Introduction to the Laboratory.html" class="dropdown-link">实验室简介</a>
+                    <a href="Laboratory Charter.html" class="dropdown-link">实验室章程</a>
+                </div>
+            </div>
+            
+            <a href="team.html" class="nav-link">团队</a>
+            
+            <div class="dropdown">
+                <a href="paper.html" class="nav-link">成果性展示</a>
+                <div class="dropdown-content">
+                    <a href="paper.html" class="dropdown-link">论文</a>
+                    <a href="algorithm.html" class="dropdown-link">算法</a>
+                    <a href="science and technology innovation.html" class="dropdown-link">科创</a>
+                    <a href="enterprise.html" class="dropdown-link">企业</a>
+                </div>
+            </div>
+            
+            <a href="dynamic.html" class="nav-link">动态</a>
+            
+            <div class="dropdown">
+                <a href="#footer" class="nav-link">加入我们</a>
+                <div class="dropdown-content">
+                    <a href="Recruitment for the Algorithm Group.html" class="dropdown-link">算法组招生</a>
+                    <a href="Project team recruitment.html" class="dropdown-link">项目组招生</a>
+                </div>
+            </div>
+        </div>
+        <div class="menu-toggle">☰</div>
+        </nav>
+    
+    <!-- 新增：现代风格论文发表部分 -->
+    <section id="modern-publications" class="py-20 relative">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-bold mb-4 text-glow gradient-text">前沿论文发表</h2>
+                <div class="w-32 h-1 bg-gradient-to-r from-cyber-cyan to-transparent mx-auto"></div>
+                <p class="mt-6 text-cyber-silver/70 max-w-2xl mx-auto">
+                    实验室成员在国际顶级期刊和会议上发表多篇论文，推动算法研究和应用的发展
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 左侧：最新论文列表 -->
+                <div class="glass-effect rounded-lg p-6 neon-border">
+                    <h3 class="text-2xl font-bold mb-6 text-cyber-cyan">最新发表论文</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- 论文1 -->
+                        <div class="publication-item p-4 border border-cyber-cyan/20 rounded-lg hover:border-cyber-cyan transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-lg font-semibold group-hover:text-cyber-cyan transition-colors">基于深度学习的动态规划优化算法研究</h4>
+                                <span class="text-xs bg-cyber-purple/20 text-cyber-purple px-2 py-1 rounded">2023</span>
+                            </div>
+                            
+                            <p class="text-sm text-cyber-silver/70 mb-4 line-clamp-2">
+                                提出了一种结合深度学习和动态规划的新型优化算法，在多个测试集上表现出比传统算法更高的效率和精度。
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">深度学习</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">动态规划</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">优化算法</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm text-cyber-silver/60">
+                                    <span>张明, 李华, 王强</span>
+                                </div>
+                                <span class="text-xs text-cyber-cyan">
+                                    <i class="fa fa-file-pdf-o mr-1"></i> 查看PDF
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- 论文2 -->
+                        <div class="publication-item p-4 border border-cyber-cyan/20 rounded-lg hover:border-cyber-cyan transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-lg font-semibold group-hover:text-cyber-cyan transition-colors">图神经网络在组合优化问题中的应用</h4>
+                                <span class="text-xs bg-cyber-purple/20 text-cyber-purple px-2 py-1 rounded">2023</span>
+                            </div>
+                            
+                            <p class="text-sm text-cyber-silver/70 mb-4 line-clamp-2">
+                                探索了图神经网络在解决NP难组合优化问题中的潜力，提出了一种端到端的学习框架，在TSP等问题上取得突破性进展。
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">图神经网络</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">组合优化</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">TSP</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm text-cyber-silver/60">
+                                    <span>刘强, 陈晓, 赵丽</span>
+                                </div>
+                                <span class="text-xs text-cyber-cyan">
+                                    <i class="fa fa-file-pdf-o mr-1"></i> 查看PDF
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- 论文3 -->
+                        <div class="publication-item p-4 border border-cyber-cyan/20 rounded-lg hover:border-cyber-cyan transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-lg font-semibold group-hover:text-cyber-cyan transition-colors">大规模数据下的近似算法设计与分析</h4>
+                                <span class="text-xs bg-cyber-purple/20 text-cyber-purple px-2 py-1 rounded">2022</span>
+                            </div>
+                            
+                            <p class="text-sm text-cyber-silver/70 mb-4 line-clamp-2">
+                                针对大规模数据场景，设计了一系列高效的近似算法，并通过理论分析和实验验证了算法的性能保证和实际效果。
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">近似算法</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">大数据</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">算法分析</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm text-cyber-silver/60">
+                                    <span>吴杰, 黄志强, 孙晓</span>
+                                </div>
+                                <span class="text-xs text-cyber-cyan">
+                                    <i class="fa fa-file-pdf-o mr-1"></i> 查看PDF
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- 论文4 -->
+                        <div class="publication-item p-4 border border-cyber-cyan/20 rounded-lg hover:border-cyber-cyan transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-lg font-semibold group-hover:text-cyber-cyan transition-colors">量子启发式算法在机器学习中的应用研究</h4>
+                                <span class="text-xs bg-cyber-purple/20 text-cyber-purple px-2 py-1 rounded">2022</span>
+                            </div>
+                            
+                            <p class="text-sm text-cyber-silver/70 mb-4 line-clamp-2">
+                                将量子计算的思想引入传统机器学习算法，提出了一系列量子启发式优化方法，显著提升了模型训练速度和泛化能力。
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">量子计算</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">机器学习</span>
+                                <span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-0.5 rounded">启发式算法</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm text-cyber-silver/60">
+                                    <span>郑琳, 王芳, 陈明</span>
+                                </div>
+                                <span class="text-xs text-cyber-cyan">
+                                    <i class="fa fa-file-pdf-o mr-1"></i> 查看PDF
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="view-more-papers" class="mt-8 w-full py-2 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-cyber-dark transition-all rounded">
+                        查看更多论文
+                    </button>
+                </div>
+                
+                <!-- 右侧：论文发表统计和状态 -->
+                <div class="flex flex-col gap-8">
+                    <!-- 论文统计 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border">
+                        <h3 class="text-xl font-bold mb-6 text-cyber-cyan">论文发表统计</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm">按期刊分类</span>
+                                    <span class="text-sm text-cyber-cyan">总计: 128篇</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span>ACM Transactions系列</span>
+                                            <span>32篇</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-cyber-gray/30 rounded-full overflow-hidden">
+                                            <div class="h-full bg-cyber-cyan rounded-full" style="width: 25%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span>IEEE Transactions系列</span>
+                                            <span>45篇</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-cyber-gray/30 rounded-full overflow-hidden">
+                                            <div class="h-full bg-cyber-purple rounded-full" style="width: 35%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span>其他SCI期刊</span>
+                                            <span>51篇</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-cyber-gray/30 rounded-full overflow-hidden">
+                                            <div class="h-full bg-cyber-pink rounded-full" style="width: 40%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm">按年份分布</span>
+                                    <span class="text-sm text-cyber-cyan">近5年</span>
+                                </div>
+                                <div class="h-40">
+                                    <canvas id="publicationsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 论文收录状态 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border">
+                        <h3 class="text-xl font-bold mb-6 text-cyber-cyan">论文收录状态</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- 论文状态1 -->
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <h4 class="text-sm font-medium">基于注意力机制的自适应算法设计</h4>
+                                    <span class="text-xs bg-cyber-cyan/20 text-cyber-cyan px-2 py-0.5 rounded">审稿中</span>
+                                </div>
+                                <div class="w-full h-2 bg-cyber-gray/30 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-cyber-cyan to-cyber-purple rounded-full" style="width: 65%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-cyber-silver/60 mt-1">
+                                    <span>Submitted to: NeurIPS 2023</span>
+                                    <span>65%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 论文状态2 -->
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <h4 class="text-sm font-medium">分布式环境下的并行优化算法研究</h4>
+                                    <span class="text-xs bg-cyber-purple/20 text-cyber-purple px-2 py-0.5 rounded">修改中</span>
+                                </div>
+                                <div class="w-full h-2 bg-cyber-gray/30 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-cyber-purple to-cyber-pink rounded-full" style="width: 40%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-cyber-silver/60 mt-1">
+                                    <span>Submitted to: IEEE TPDS</span>
+                                    <span>40%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 论文状态3 -->
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <h4 class="text-sm font-medium">强化学习在组合优化中的新进展</h4>
+                                    <span class="text-xs bg-cyber-pink/20 text-cyber-pink px-2 py-0.5 rounded">准备投稿</span>
+                                </div>
+                                <div class="w-full h-2 bg-cyber-gray/30 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-cyber-pink to-cyber-cyan rounded-full" style="width: 20%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-cyber-silver/60 mt-1">
+                                    <span>Target: ICML 2024</span>
+                                    <span>20%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="papers-section" class="hero">
+        <h1>学术论文发表</h1>
+        <p>探索我们实验室在量子计算、人工智能和密码学等领域的前沿研究成果，所有论文均发表在顶级期刊和会议上。</p>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">全部论文</button>
+            <button class="filter-btn" data-filter="quantum">量子计算</button>
+            <button class="filter-btn" data-filter="ai">人工智能</button>
+            <button class="filter-btn" data-filter="crypto">密码学</button>
+            <button class="filter-btn" data-filter="theory">理论计算机</button>
+        </div>
+    </section>
+    
+    <div class="papers-container">
+        <div class="paper-card quantum">
+            <div class="paper-header">
+                <h3 class="paper-title">量子神经网络在图像识别中的应用</h3>
+                <div class="authors">
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="张伟">
+                        <span>张伟</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="李娜">
+                        <span>李娜</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/55.jpg" alt="王强">
+                        <span>王强</span>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>2023年6月</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-book"></i>
+                        <span>Nature Quantum Information</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-quote-right"></i>
+                        <span>引用: 128</span>
+                    </div>
+                </div>
+                <div class="paper-badge badge-quantum">量子计算</div>
+            </div>
+            <div class="paper-content">
+                <div class="abstract">
+                    <p>本研究提出了一种新型量子神经网络架构，能够在中等规模量子处理器上实现高效的图像识别任务。与传统神经网络相比，我们的方法在特定数据集上实现了2.3倍的准确率提升，同时减少了90%的计算资源消耗。实验在IBM Quantum Experience平台上验证了该方法的有效性。</p>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> PDF全文</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 代码仓库</a>
+                    <a href="#" class="link"><i class="fas fa-video"></i> 视频讲解</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="paper-card ai">
+            <div class="paper-header">
+                <h3 class="paper-title">基于量子启发的深度强化学习算法</h3>
+                <div class="authors">
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="王强">
+                        <span>王强</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/63.jpg" alt="陈明">
+                        <span>陈明</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="张伟">
+                        <span>张伟</span>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>2022年12月</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-book"></i>
+                        <span>NeurIPS 2022</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-quote-right"></i>
+                        <span>引用: 87</span>
+                    </div>
+                </div>
+                <div class="paper-badge badge-ai">人工智能</div>
+            </div>
+            <div class="paper-content">
+                <div class="abstract">
+                    <p>本文提出了一种受量子叠加原理启发的深度强化学习算法Q-DRL，通过引入概率叠加状态表示和量子并行策略评估机制，显著提高了算法在复杂环境中的探索效率和策略优化速度。在Atari游戏基准测试中，Q-DRL相比传统DQN算法平均得分提高了45%，训练时间减少了30%。</p>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> PDF全文</a>
+                    <a href="#" class="link"><i class="fas fa-code"></i> 代码仓库</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="paper-card crypto">
+            <div class="paper-header">
+                <h3 class="paper-title">抗量子计算攻击的新型格密码系统</h3>
+                <div class="authors">
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="李娜">
+                        <span>李娜</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/28.jpg" alt="赵亮">
+                        <span>赵亮</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/72.jpg" alt="王强">
+                        <span>王强</span>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>2023年8月</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-book"></i>
+                        <span>CRYPTO 2023</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-quote-right"></i>
+                        <span>引用: 42</span>
+                    </div>
+                </div>
+                <div class="paper-badge badge-crypto">密码学</div>
+            </div>
+            <div class="paper-content">
+                <div class="abstract">
+                    <p>针对未来量子计算机对现有公钥密码系统的威胁，我们设计了一种基于理想格的新型密码系统QLattice。该系统在保持与RSA相当的计算效率的同时，提供了可证明的后量子安全性。实验表明，QLattice在标准硬件上的加密速度比NIST后量子密码标准候选方案快2-5倍，特别适合物联网设备应用。</p>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> PDF全文</a>
+                    <a href="#" class="link"><i class="fas fa-lock"></i> 安全分析</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="paper-card theory">
+            <div class="paper-header">
+                <h3 class="paper-title">量子计算复杂性理论的新进展</h3>
+                <div class="authors">
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="陈明">
+                        <span>陈明</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="张伟">
+                        <span>张伟</span>
+                    </div>
+                    <div class="author">
+                        <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="李娜">
+                        <span>李娜</span>
+                    </div>
+                </div>
+                <div class="meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>2023年5月</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-book"></i>
+                        <span>STOC 2023</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-quote-right"></i>
+                        <span>引用: 56</span>
+                    </div>
+                </div>
+                <div class="paper-badge badge-theory">理论计算机</div>
+            </div>
+            <div class="paper-content">
+                <div class="abstract">
+                    <p>本论文解决了量子计算复杂性理论中长期存在的两个开放性问题：1) 证明了QMA(2) = QMA(k)对于所有k ≥ 2，统一了多证明者量子交互证明系统的复杂性分类；2) 构造了第一个具有超多项式量子加速的天然问题，为量子优势理论提供了新的理论基础。这些结果对理解量子计算的本质极限具有重要意义。</p>
+                </div>
+                <div class="links">
+                    <a href="#" class="link"><i class="fas fa-file-pdf"></i> PDF全文</a>
+                    <a href="#" class="link"><i class="fas fa-chalkboard-teacher"></i> 讲座幻灯片</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+ <!-- 页脚 -->
+ <footer id="footer" class="footer">
+    <a href="index.html" class="footer-logo">ACM实验室</a>
+    
+    <div class="footer-links">
+        <a href="Introduction to the Laboratory.html" class="footer-link">实验室简介</a>
+        <a href="Laboratory Charter.html" class="footer-link">实验室章程</a>
+        <a href="team.html" class="footer-link">团队</a>
+        <a href="paper.html" class="footer-link">论文</a>
+        <a href="algorithm.html" class="footer-link">算法</a>
+        <a href="science and technology innovation.html" class="footer-link">科创</a>
+        <a href="enterprise.html" class="footer-link">企业</a>
+        <a href="dynamic.html" class="footer-link">动态</a>
+        <a href="Recruitment for the Algorithm Group.html" class="footer-link">算法组招生</a>
+        <a href="Project team recruitment.html" class="footer-link">项目组招生</a>
+    </div>
+    
+    <div class="footer-social">
+        <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-weibo"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+    </div>
+    
+    <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
+</footer>
+    
+    <!-- 详情页模态框 (默认隐藏) -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-cyber-dark/90 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 overflow-y-auto p-4 flex items-center justify-center">
+            <div class="detail-content glass-effect rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all scale-95 opacity-0" id="modal-content">
+                <!-- 详情内容将通过JavaScript动态填充 -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 粒子背景初始化（仅保留展示相关）
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#3a86ff' },
+                shape: { type: 'circle', stroke: { width: 0, color: '#000000' }, polygon: { nb_sides: 5 } },
+                opacity: { value: 0.5 },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#3a86ff', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
+                }
+            },
+            retina_detect: true
+        });
+        
+        // 论文筛选功能
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const paperCards = document.querySelectorAll('.paper-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 更新按钮状态
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const filter = button.dataset.filter;
+                
+                // 筛选论文
+                paperCards.forEach(card => {
+                    if (filter === 'all' || card.classList.contains(filter)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // 查看更多论文按钮点击事件
+        const viewMoreButton = document.getElementById('view-more-papers');
+        if (viewMoreButton) {
+            viewMoreButton.addEventListener('click', function() {
+                // 确保显示全部论文
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+                
+                // 显示所有论文卡片
+                paperCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                
+                // 平滑滚动到论文发表部分
+                document.getElementById('papers-section').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        }
+        
+        // 滚动动画
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // 新增：图表初始化代码
+        // 论文发表统计图表
+        const pubsChart = document.getElementById('publicationsChart');
+        if (pubsChart) {
+            const pubsCtx = pubsChart.getContext('2d');
+            new Chart(pubsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+                    datasets: [{
+                        label: '论文数量',
+                        data: [12, 18, 22, 25, 28, 33],
+                        fill: true,
+                        backgroundColor: 'rgba(0, 240, 255, 0.1)',
+                        borderColor: 'rgba(0, 240, 255, 1)',
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(0, 240, 255, 1)',
+                        pointBorderColor: '#050A1A',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(230, 230, 250, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(230, 230, 250, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(230, 230, 250, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(230, 230, 250, 0.7)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(230, 230, 250, 0.7)',
+                                font: {
+                                    family: 'Orbitron'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 新增：详情模态框功能
+        const modal = document.getElementById('detail-modal');
+        const modalContent = document.getElementById('modal-content');
+        const publicationItems = document.querySelectorAll('.publication-item');
+        
+        // 关闭模态框
+        function closeModal() {
+            if (modal) {
+                modal.classList.add('hidden');
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // 点击模态框背景关闭
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+        
+        // 点击ESC关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+        
+        // 打开论文详情
+        publicationItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const title = this.querySelector('h4').textContent;
+                const year = this.querySelector('.bg-cyber-purple\\/20').textContent;
+                const description = this.querySelector('p').textContent;
+                const authors = this.querySelector('.text-sm.text-cyber-silver\\/60 span').textContent;
+                const tags = Array.from(this.querySelectorAll('.text-xs.bg-cyber-blue\\/50')).map(tag => tag.textContent);
+                
+                // 填充模态框内容
+                modalContent.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-cyber-cyan">${title}</h3>
+                            <button class="close-modal text-cyber-silver hover:text-cyber-cyan">
+                                <i class="fa fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="text-xs bg-cyber-purple/20 text-cyber-purple px-2 py-1 rounded">${year}</span>
+                            ${tags.map(tag => `<span class="text-xs bg-cyber-blue/50 text-cyber-silver/80 px-2 py-1 rounded">${tag}</span>`).join('')}
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold mb-3">作者</h4>
+                            <p class="text-cyber-silver/80">${authors}</p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold mb-3">摘要</h4>
+                            <p class="text-cyber-silver/80 leading-relaxed">
+                                ${description} 本文提出的方法在多个标准测试集上进行了验证，
+                                实验结果表明，与现有方法相比，我们的方法在精度和效率上都有显著提升。
+                                这项研究为相关领域的进一步发展提供了新的思路和方向，
+                                具有重要的理论意义和应用价值。
+                            </p>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold mb-3">研究贡献</h4>
+                            <ul class="space-y-2 text-cyber-silver/80">
+                                <li class="flex items-start">
+                                    <i class="fa fa-star text-cyber-cyan mt-1 mr-2"></i>
+                                    <span>提出了一种新的算法框架，解决了现有方法存在的局限性</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-star text-cyber-cyan mt-1 mr-2"></i>
+                                    <span>通过理论分析证明了所提方法的收敛性和复杂度</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-star text-cyber-cyan mt-1 mr-2"></i>
+                                    <span>在多个数据集上进行了广泛实验，验证了方法的有效性</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-star text-cyber-cyan mt-1 mr-2"></i>
+                                    <span>开源了代码和实验数据，便于其他研究者复现和扩展</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <a href="#" class="px-6 py-2 bg-cyber-cyan text-cyber-dark font-bold rounded hover:bg-cyber-silver transition-colors flex items-center">
+                                <i class="fa fa-file-pdf-o mr-2"></i> 下载论文PDF
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                // 显示模态框
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+                
+                // 禁止背景滚动
+                document.body.style.overflow = 'hidden';
+                
+                // 添加关闭按钮事件
+                modalContent.querySelector('.close-modal').addEventListener('click', closeModal);
+            });
+        });
+    </script>
+</body>
+</html>
