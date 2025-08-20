@@ -230,37 +230,32 @@
             width: 100%;
         }
         
-        /* 页脚（展示相关，保留） */
-        footer {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 3rem 5%;
+                /* 页脚（迁移自 index.html） */
+        .footer {
+            background: var(--dark-bg);
+            padding: 3rem 10%;
             text-align: center;
-            margin-top: 5rem;
-            position: relative;
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
         }
-        
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
-        
+
         .footer-logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            text-decoration: none;
             margin-bottom: 1.5rem;
             display: inline-block;
+            transition: all 0.3s ease;
         }
         
+        .footer-logo.active {
+            text-shadow: 0 0 15px rgba(58, 134, 255, 0.6);
+            transform: scale(1.05);
+        }
+
         .footer-links {
             display: flex;
             justify-content: center;
@@ -268,11 +263,60 @@
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
+
+        .footer-link {
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
         
-        .footer-link { color: var(--text-light); text-decoration: none; transition: color 0.3s; }
-        .footer-link:hover { color: var(--primary); }
+        /* 导航栏和页脚高亮样式 */
+        .nav-link.active,
+        .footer-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+        }
         
-        .copyright { font-size: 0.9rem; color: rgba(224, 224, 255, 0.6); }
+        .nav-link.active::after {
+            width: 100% !important;
+        }
+        
+        .dropdown-link.active {
+            color: var(--primary) !important;
+            background: rgba(58, 134, 255, 0.15) !important;
+            padding-left: 1.5rem !important;
+            font-weight: 500;
+        }
+        
+        .footer-link.active {
+            position: relative;
+        }
+        
+        .footer-link.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -3px;
+            left: 0;
+            background: var(--primary);
+        }
         
         /* 必要动画（logo 脉冲） */
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
@@ -1104,10 +1148,10 @@
             <div class="team-grid">
                 <div class="team-card">
                     <div class="team-img-container">
-                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,1" alt="张教授" class="team-img">
+                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,1" alt="α教授" class="team-img">
                         <div class="team-overlay">
                             <div class="team-info">
-                                <h3>张明远 教授</h3>
+                                <h3>α 教授</h3>
                                 <div class="team-position">实验室主任 | 机器学习</div>
                                 <p class="team-desc">斯坦福大学计算机科学博士，前Google AI首席科学家</p>
                                 <div class="team-social">
@@ -1122,10 +1166,10 @@
                 
                 <div class="team-card">
                     <div class="team-img-container">
-                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,2" alt="李教授" class="team-img">
+                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,2" alt="β教授" class="team-img">
                         <div class="team-overlay">
                             <div class="team-info">
-                                <h3>李思颖 教授</h3>
+                                <h3>β 教授</h3>
                                 <div class="team-position">副主任 | 计算机视觉</div>
                                 <p class="team-desc">麻省理工学院博士，CVPR最佳论文奖获得者</p>
                                 <div class="team-social">
@@ -1140,10 +1184,10 @@
                 
                 <div class="team-card">
                     <div class="team-img-container">
-                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,3" alt="王博士" class="team-img">
+                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,3" alt="γ博士" class="team-img">
                         <div class="team-overlay">
                             <div class="team-info">
-                                <h3>王浩然 博士</h3>
+                                <h3>γ 博士</h3>
                                 <div class="team-position">高级研究员 | 自然语言处理</div>
                                 <p class="team-desc">卡内基梅隆大学博士，ACL最佳论文奖获得者</p>
                                 <div class="team-social">
@@ -1158,10 +1202,10 @@
                 
                 <div class="team-card">
                     <div class="team-img-container">
-                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,4" alt="陈博士" class="team-img">
+                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,4" alt="δ博士" class="team-img">
                         <div class="team-overlay">
                             <div class="team-info">
-                                <h3>陈雨桐 博士</h3>
+                                <h3>δ 博士</h3>
                                 <div class="team-position">高级研究员 | 分布式系统</div>
                                 <p class="team-desc">加州大学伯克利分校博士，SIGCOMM最佳论文奖获得者</p>
                                 <div class="team-social">
@@ -1176,10 +1220,10 @@
                 
                 <div class="team-card">
                     <div class="team-img-container">
-                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,5" alt="赵博士" class="team-img">
+                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,5" alt="ε博士" class="team-img">
                         <div class="team-overlay">
                             <div class="team-info">
-                                <h3>赵天宇 博士</h3>
+                                <h3>ε 博士</h3>
                                 <div class="team-position">研究员 | 强化学习</div>
                                 <p class="team-desc">牛津大学博士，NeurIPS杰出论文奖获得者</p>
                                 <div class="team-social">
@@ -1194,10 +1238,10 @@
                 
                 <div class="team-card">
                     <div class="team-img-container">
-                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,6" alt="刘博士" class="team-img">
+                        <img src="https://source.unsplash.com/random/600x400/?portrait,scientist,6" alt="ζ博士" class="team-img">
                         <div class="team-overlay">
                             <div class="team-info">
-                                <h3>刘佳怡 博士</h3>
+                                <h3>ζ 博士</h3>
                                 <div class="team-position">研究员 | 量子计算</div>
                                 <p class="team-desc">苏黎世联邦理工学院博士，量子算法专家</p>
                                 <div class="team-social">
@@ -1233,9 +1277,9 @@
                 <h3>机器学习与人工智能</h3>
                 <p>研究深度学习、强化学习、联邦学习等前沿方向，开发高效、可解释、可信赖的AI系统</p>
                 <div class="research-members">
-                    <span class="member-tag">张明远</span>
-                    <span class="member-tag">赵天宇</span>
-                    <span class="member-tag">王浩然</span>
+                    <span class="member-tag">α</span>
+                    <span class="member-tag">ε</span>
+                    <span class="member-tag">γ</span>
                     <span class="member-tag">+5位成员</span>
                 </div>
             </div>
@@ -1244,8 +1288,8 @@
                 <h3>计算机视觉与多媒体</h3>
                 <p>研究图像识别、视频理解、生成模型等，开发创新的视觉感知和内容生成技术</p>
                 <div class="research-members">
-                    <span class="member-tag">李思颖</span>
-                    <span class="member-tag">陈雨桐</span>
+                    <span class="member-tag">β</span>
+                    <span class="member-tag">δ</span>
                     <span class="member-tag">+3位成员</span>
                 </div>
             </div>
@@ -1254,8 +1298,8 @@
                 <h3>自然语言处理</h3>
                 <p>研究大规模预训练模型、多语言处理、对话系统等，推动语言智能的边界</p>
                 <div class="research-members">
-                    <span class="member-tag">王浩然</span>
-                    <span class="member-tag">张明远</span>
+                    <span class="member-tag">γ</span>
+                    <span class="member-tag">α</span>
                     <span class="member-tag">+4位成员</span>
                 </div>
             </div>
@@ -1264,7 +1308,7 @@
                 <h3>分布式系统与云计算</h3>
                 <p>研究高性能分布式算法、边缘计算、服务网格等，构建下一代可扩展系统架构</p>
                 <div class="research-members">
-                    <span class="member-tag">陈雨桐</span>
+                    <span class="member-tag">δ</span>
                     <span class="member-tag">+6位成员</span>
                 </div>
             </div>
@@ -1273,7 +1317,7 @@
                 <h3>量子计算与密码学</h3>
                 <p>研究量子算法、后量子密码、量子机器学习等，探索计算技术的未来范式</p>
                 <div class="research-members">
-                    <span class="member-tag">刘佳怡</span>
+                    <span class="member-tag">ζ</span>
                     <span class="member-tag">+3位成员</span>
                 </div>
             </div>
@@ -1282,7 +1326,7 @@
                 <h3>人机交互与可视化</h3>
                 <p>研究增强现实、可视化分析、普适计算等，改善人与技术的交互方式</p>
                 <div class="research-members">
-                    <span class="member-tag">李思颖</span>
+                    <span class="member-tag">β</span>
                     <span class="member-tag">+4位成员</span>
                 </div>
             </div>
@@ -1291,7 +1335,7 @@
                 <h3>高性能计算与并行处理</h3>
                 <p>研究GPU加速、集群计算、异构系统优化等，提升大规模计算效率</p>
                 <div class="research-members">
-                    <span class="member-tag">陈雨桐</span>
+                    <span class="member-tag">δ</span>
                     <span class="member-tag">+5位成员</span>
                 </div>
             </div>
@@ -1300,8 +1344,8 @@
                 <h3>算法设计与分析</h3>
                 <p>研究图算法、优化算法、近似算法等理论基础，探索计算复杂性边界</p>
                 <div class="research-members">
-                    <span class="member-tag">刘佳怡</span>
-                    <span class="member-tag">张明远</span>
+                    <span class="member-tag">ζ</span>
+                    <span class="member-tag">α</span>
                     <span class="member-tag">+4位成员</span>
                 </div>
             </div>
@@ -1310,8 +1354,8 @@
                 <h3>智能医疗与生物信息</h3>
                 <p>结合AI技术开发医疗诊断系统、药物发现平台等创新应用</p>
                 <div class="research-members">
-                    <span class="member-tag">王浩然</span>
-                    <span class="member-tag">李思颖</span>
+                    <span class="member-tag">γ</span>
+                    <span class="member-tag">β</span>
                     <span class="member-tag">+6位成员</span>
                 </div>
             </div>
@@ -1320,8 +1364,8 @@
                 <h3>网络安全与隐私保护</h3>
                 <p>研究区块链、零知识证明、差分隐私等前沿安全技术</p>
                 <div class="research-members">
-                    <span class="member-tag">陈雨桐</span>
-                    <span class="member-tag">刘佳怡</span>
+                    <span class="member-tag">δ</span>
+                    <span class="member-tag">ζ</span>
                     <span class="member-tag">+3位成员</span>
                 </div>
             </div>
@@ -1330,7 +1374,7 @@
                 <h3>智能制造与工业4.0</h3>
                 <p>开发智能生产调度、质量检测、预测维护等工业应用解决方案</p>
                 <div class="research-members">
-                    <span class="member-tag">赵天宇</span>
+                    <span class="member-tag">ε</span>
                     <span class="member-tag">+5位成员</span>
                 </div>
             </div>
@@ -1382,33 +1426,34 @@
         </div>
     </div>
     
- <!-- 页脚 -->
- <footer id="footer" class="footer">
-    <a href="index.html" class="footer-logo">ACM实验室</a>
-    
-    <div class="footer-links">
-        <a href="Introduction to the Laboratory.html" class="footer-link">实验室简介</a>
-        <a href="Laboratory Charter.html" class="footer-link">实验室章程</a>
-        <a href="team.html" class="footer-link">团队</a>
-        <a href="paper.html" class="footer-link">论文</a>
-        <a href="algorithm.html" class="footer-link">算法</a>
-        <a href="science and technology innovation.html" class="footer-link">科创</a>
-        <a href="enterprise.html" class="footer-link">企业</a>
-        <a href="dynamic.html" class="footer-link">动态</a>
-        <a href="Recruitment for the Algorithm Group.html" class="footer-link">算法组招生</a>
-        <a href="Project team recruitment.html" class="footer-link">项目组招生</a>
-    </div>
-    
-    <div class="footer-social">
-        <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
-        <a href="#" class="social-icon"><i class="fab fa-weibo"></i></a>
-        <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
-    </div>
-    
-    <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
-</footer>
+    <!-- 页脚 -->
+    <footer id="footer" class="footer">
+        <a href="index.html" class="footer-logo">ACM实验室</a>
+        
+        <div class="footer-links">
+            <a href="Introduction to the Laboratory.html" class="footer-link">实验室简介</a>
+            <a href="Laboratory Charter.html" class="footer-link">实验室章程</a>
+            <a href="team.html" class="footer-link">团队</a>
+            <a href="paper.html" class="footer-link">论文</a>
+            <a href="algorithm.html" class="footer-link">算法</a>
+            <a href="science and technology innovation.html" class="footer-link">科创</a>
+            <a href="enterprise.html" class="footer-link">企业</a>
+            <a href="dynamic.html" class="footer-link">动态</a>
+            <a href="Recruitment for the Algorithm Group.html" class="footer-link">算法组招生</a>
+            <a href="Project team recruitment.html" class="footer-link">项目组招生</a>
+        </div>
+        
+        <div class="footer-social">
+            <a href="#" class="social-icon" title="微信"><i class="fab fa-weixin"></i></a>
+            <a href="#" class="social-icon" title="微博"><i class="fab fa-weibo"></i></a>
+            <a href="#" class="social-icon" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://mp.weixin.qq.com/s/your-wechat-official-account" class="social-icon" title="微信公众号"><i class="fas fa-newspaper"></i></a>
+            <a href="https://space.bilibili.com/your-bilibili-id" class="social-icon" title="哔哩哔哩"><i class="fab fa-bilibili"></i></a>
+            <a href="#" class="social-icon" title="邮箱"><i class="fas fa-envelope"></i></a>
+        </div>
+        
+        <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
+    </footer>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         // 粒子背景初始化（仅保留展示相关）
@@ -1699,6 +1744,121 @@
 
         renderOpenings();
 
+    </script>
+    
+    <!-- 导航栏和页脚高亮显示当前页面 -->
+    <script>
+        (function() {
+            // 页面加载完成后执行
+            document.addEventListener('DOMContentLoaded', function() {
+                // 获取当前页面文件名
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                
+                // 页面映射关系
+                const pageMapping = {
+                    'index.html': {
+                        navSelector: '.logo', // 首页高亮logo
+                        footerText: 'ACM实验室'
+                    },
+                    'Introduction to the Laboratory.html': {
+                        navText: '实验室概况',
+                        dropdownText: '实验室简介',
+                        footerText: '实验室简介'
+                    },
+                    'Laboratory Charter.html': {
+                        navText: '实验室概况', 
+                        dropdownText: '实验室章程',
+                        footerText: '实验室章程'
+                    },
+                    'team.html': {
+                        navText: '团队',
+                        footerText: '团队'
+                    },
+                    'paper.html': {
+                        navText: '成果性展示',
+                        dropdownText: '论文',
+                        footerText: '论文'
+                    },
+                    'algorithm.html': {
+                        navText: '成果性展示',
+                        dropdownText: '算法', 
+                        footerText: '算法'
+                    },
+                    'science and technology innovation.html': {
+                        navText: '成果性展示',
+                        dropdownText: '科创',
+                        footerText: '科创'
+                    },
+                    'enterprise.html': {
+                        navText: '成果性展示',
+                        dropdownText: '企业',
+                        footerText: '企业'
+                    },
+                    'dynamic.html': {
+                        navText: '动态',
+                        footerText: '动态'
+                    },
+                    'Recruitment for the Algorithm Group.html': {
+                        navText: '加入我们',
+                        dropdownText: '算法组招生',
+                        footerText: '算法组招生'
+                    },
+                    'Project team recruitment.html': {
+                        navText: '加入我们',
+                        dropdownText: '项目组招生',
+                        footerText: '项目组招生'
+                    }
+                };
+                
+                const currentPageInfo = pageMapping[currentPage];
+                if (!currentPageInfo) return;
+                
+                // 处理导航栏高亮
+                if (currentPageInfo.navSelector) {
+                    // 特殊选择器（如logo）
+                    const element = document.querySelector(currentPageInfo.navSelector);
+                    if (element) {
+                        element.classList.add('active');
+                    }
+                } else if (currentPageInfo.navText) {
+                    // 主导航链接高亮
+                    const navLinks = document.querySelectorAll('.nav-link');
+                    navLinks.forEach(link => {
+                        if (link.textContent.trim() === currentPageInfo.navText) {
+                            link.classList.add('active');
+                        }
+                    });
+                    
+                    // 下拉菜单项高亮
+                    if (currentPageInfo.dropdownText) {
+                        const dropdownLinks = document.querySelectorAll('.dropdown-link');
+                        dropdownLinks.forEach(link => {
+                            if (link.textContent.trim() === currentPageInfo.dropdownText) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                }
+                
+                // 处理页脚高亮
+                if (currentPageInfo.footerText) {
+                    const footerLinks = document.querySelectorAll('.footer-link');
+                    footerLinks.forEach(link => {
+                        if (link.textContent.trim() === currentPageInfo.footerText) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+                
+                // 特殊处理：如果是首页，高亮页脚的ACM实验室logo
+                if (currentPage === 'index.html') {
+                    const footerLogo = document.querySelector('.footer-logo');
+                    if (footerLogo) {
+                        footerLogo.classList.add('active');
+                    }
+                }
+            });
+        })();
     </script>
 </body>
 </html>

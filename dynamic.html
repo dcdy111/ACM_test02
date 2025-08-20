@@ -315,49 +315,123 @@
 			width: 100%;
 		}
 		
-		/* 页脚（展示相关，保留） */
-		footer {
-			background: rgba(0, 0, 0, 0.2);
-			padding: 3rem 5%;
-			text-align: center;
-			margin-top: 5rem;
-			position: relative;
-		}
-		
-		footer::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 1px;
-			background: linear-gradient(90deg, transparent, var(--primary), transparent);
-		}
-		
-		.footer-logo {
-			font-family: 'Orbitron', sans-serif;
-			font-size: 2rem;
-			font-weight: 700;
-			background: linear-gradient(to right, var(--primary), var(--secondary));
-			-webkit-background-clip: text;
-			background-clip: text;
-			color: transparent;
-			margin-bottom: 1.5rem;
-			display: inline-block;
-		}
-		
-		.footer-links {
-			display: flex;
-			justify-content: center;
-			gap: 2rem;
-			margin-bottom: 2rem;
-			flex-wrap: wrap;
-		}
-		
-		.footer-link { color: var(--text-light); text-decoration: none; transition: color 0.3s; }
-		.footer-link:hover { color: var(--primary); }
-		
-		.copyright { font-size: 0.9rem; color: rgba(224, 224, 255, 0.6); }
+		        /* 页脚（迁移自 index.html） */
+        .footer {
+            background: var(--dark-bg);
+            padding: 3rem 10%;
+            text-align: center;
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-logo.active {
+            text-shadow: 0 0 15px rgba(58, 134, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+        .social-icon i {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .social-icon:hover i {
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            color: var(--dark);
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* 导航栏和页脚高亮样式 */
+        .nav-link.active,
+        .footer-link.active {
+            color: var(--primary) !important;
+            font-weight: 600;
+        }
+        
+        .nav-link.active::after {
+            width: 100% !important;
+        }
+        
+        .dropdown-link.active {
+            color: var(--primary) !important;
+            background: rgba(58, 134, 255, 0.15) !important;
+            padding-left: 1.5rem !important;
+            font-weight: 500;
+        }
+        
+        .footer-link.active {
+            position: relative;
+        }
+        
+        .footer-link.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -3px;
+            left: 0;
+            background: var(--primary);
+        }
 		
 		/* 必要动画（logo 脉冲） */
 		@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
@@ -1018,7 +1092,7 @@
 					<div class="flex items-center mb-4">
 						<img src="https://picsum.photos/id/1012/100/100" alt="团队成员头像" class="w-12 h-12 rounded-full object-cover mr-4">
 						<div>
-							<h4 class="text-white font-medium">李明</h4>
+							                            <h4 class="text-white font-medium">Τ</h4>
 							<div class="flex text-neon-purple text-sm">
 								<i class="fa fa-star"></i>
 								<i class="fa fa-star"></i>
@@ -1041,7 +1115,7 @@
 					<div class="flex items-center mb-4">
 						<img src="https://picsum.photos/id/1027/100/100" alt="团队成员头像" class="w-12 h-12 rounded-full object-cover mr-4">
 						<div>
-							<h4 class="text-white font-medium">张婷</h4>
+							                            <h4 class="text-white font-medium">Υ</h4>
 							<div class="flex text-neon-purple text-sm">
 								<i class="fa fa-star"></i>
 								<i class="fa fa-star"></i>
@@ -1064,7 +1138,7 @@
 					<div class="flex items-center mb-4">
 						<img src="https://picsum.photos/id/1025/100/100" alt="团队成员头像" class="w-12 h-12 rounded-full object-cover mr-4">
 						<div>
-							<h4 class="text-white font-medium">王浩</h4>
+							                            <h4 class="text-white font-medium">Φ</h4>
 							<div class="flex text-neon-purple text-sm">
 								<i class="fa fa-star"></i>
 								<i class="fa fa-star"></i>
@@ -1268,7 +1342,7 @@
 										</div>
 										<div>
 											<h5 class="text-white text-sm font-medium">专家主题分享 (09:00-11:00)</h5>
-											<p class="text-gray-400 text-xs">特邀清华大学张教授分享最新研究成果</p>
+											                            <p class="text-gray-400 text-xs">特邀清华大学Χ教授分享最新研究成果</p>
 										</div>
 									</div>
 									<div class="flex gap-3">
@@ -1402,8 +1476,8 @@
 	
 	
 	
-	 <!-- 页脚 -->
-	 <footer id="footer" class="footer">
+	         <!-- 页脚 -->
+    <footer id="footer" class="footer">
         <a href="index.html" class="footer-logo">ACM实验室</a>
         
         <div class="footer-links">
@@ -1420,11 +1494,12 @@
         </div>
         
         <div class="footer-social">
-            <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-weibo"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#" class="social-icon"><i class="fas fa-envelope"></i></a>
+            <a href="#" class="social-icon" title="微信"><i class="fab fa-weixin"></i></a>
+            <a href="#" class="social-icon" title="微博"><i class="fab fa-weibo"></i></a>
+            <a href="#" class="social-icon" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://mp.weixin.qq.com/s/your-wechat-official-account" class="social-icon" title="微信公众号"><i class="fas fa-newspaper"></i></a>
+            <a href="https://space.bilibili.com/your-bilibili-id" class="social-icon" title="哔哩哔哩"><i class="fab fa-bilibili"></i></a>
+            <a href="#" class="social-icon" title="邮箱"><i class="fas fa-envelope"></i></a>
         </div>
         
         <p class="copyright">© 2023 ACM算法与科研创新实验室. 保留所有权利.</p>
@@ -1811,7 +1886,7 @@
 					// 负责人联系方式信息
 					const contactInfo = `ACM算法研究实验室活动负责人联系方式：
 					
-活动负责人：张教授
+活动负责人：Χ教授
 电话：138-0000-1234
 微信：acm_lab_2024
 邮箱：zhang.prof@university.edu.cn
@@ -1925,4 +2000,119 @@ QQ：12345678
 			}
 		});
 	</script>
+	
+	<!-- 导航栏和页脚高亮显示当前页面 -->
+    <script>
+        (function() {
+            // 页面加载完成后执行
+            document.addEventListener('DOMContentLoaded', function() {
+                // 获取当前页面文件名
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                
+                // 页面映射关系
+                const pageMapping = {
+                    'index.html': {
+                        navSelector: '.logo', // 首页高亮logo
+                        footerText: 'ACM实验室'
+                    },
+                    'Introduction to the Laboratory.html': {
+                        navText: '实验室概况',
+                        dropdownText: '实验室简介',
+                        footerText: '实验室简介'
+                    },
+                    'Laboratory Charter.html': {
+                        navText: '实验室概况', 
+                        dropdownText: '实验室章程',
+                        footerText: '实验室章程'
+                    },
+                    'team.html': {
+                        navText: '团队',
+                        footerText: '团队'
+                    },
+                    'paper.html': {
+                        navText: '成果性展示',
+                        dropdownText: '论文',
+                        footerText: '论文'
+                    },
+                    'algorithm.html': {
+                        navText: '成果性展示',
+                        dropdownText: '算法', 
+                        footerText: '算法'
+                    },
+                    'science and technology innovation.html': {
+                        navText: '成果性展示',
+                        dropdownText: '科创',
+                        footerText: '科创'
+                    },
+                    'enterprise.html': {
+                        navText: '成果性展示',
+                        dropdownText: '企业',
+                        footerText: '企业'
+                    },
+                    'dynamic.html': {
+                        navText: '动态',
+                        footerText: '动态'
+                    },
+                    'Recruitment for the Algorithm Group.html': {
+                        navText: '加入我们',
+                        dropdownText: '算法组招生',
+                        footerText: '算法组招生'
+                    },
+                    'Project team recruitment.html': {
+                        navText: '加入我们',
+                        dropdownText: '项目组招生',
+                        footerText: '项目组招生'
+                    }
+                };
+                
+                const currentPageInfo = pageMapping[currentPage];
+                if (!currentPageInfo) return;
+                
+                // 处理导航栏高亮
+                if (currentPageInfo.navSelector) {
+                    // 特殊选择器（如logo）
+                    const element = document.querySelector(currentPageInfo.navSelector);
+                    if (element) {
+                        element.classList.add('active');
+                    }
+                } else if (currentPageInfo.navText) {
+                    // 主导航链接高亮
+                    const navLinks = document.querySelectorAll('.nav-link');
+                    navLinks.forEach(link => {
+                        if (link.textContent.trim() === currentPageInfo.navText) {
+                            link.classList.add('active');
+                        }
+                    });
+                    
+                    // 下拉菜单项高亮
+                    if (currentPageInfo.dropdownText) {
+                        const dropdownLinks = document.querySelectorAll('.dropdown-link');
+                        dropdownLinks.forEach(link => {
+                            if (link.textContent.trim() === currentPageInfo.dropdownText) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                }
+                
+                // 处理页脚高亮
+                if (currentPageInfo.footerText) {
+                    const footerLinks = document.querySelectorAll('.footer-link');
+                    footerLinks.forEach(link => {
+                        if (link.textContent.trim() === currentPageInfo.footerText) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+                
+                // 特殊处理：如果是首页，高亮页脚的ACM实验室logo
+                if (currentPage === 'index.html') {
+                    const footerLogo = document.querySelector('.footer-logo');
+                    if (footerLogo) {
+                        footerLogo.classList.add('active');
+                    }
+                }
+            });
+        })();
+    </script>
 </body>
